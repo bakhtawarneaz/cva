@@ -17,18 +17,57 @@ import im5 from '@assets/5.png'
 import im6 from '@assets/6.png'
 import ReactApexChart from 'react-apexcharts';
 import KnocksChart from '@view/KnocksChart';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { getDashboardData } from '@api/dashboardApi';
+import DashboardTopLoader from '@components/DashboardTopLoader';
 
 const Home = () => {
 
   /* Variables Here...*/
 
+  const initialData = {
+    topBarData: {
+      total_knocks: 0,
+      doors_answered: 0,
+      productivity: "0",
+      total_revenue: "0",
+      productive_calls: 0,
+      conversion_rate: "0",
+      deals_sold_yesterday: [{ deals_sold_yesterday: 0, number_of_deals: 0, percentage_yesterday: 0 }],
+      deals_sold_this_month: [{ deals_sold_this_month: 0, number_of_deals: 0, percentage_this_month: 0 }],
+    },
+    userShipData: [],
+    buyerData: [],
+    dealData: [],
+    knockData: [],
+    pitchData: { total_pitches: 0, total_bought: 0 },
+  };
   
   /* UseState Here...*/
   const [value, setValue] = useState([]);
-
+  const [data, setData] = useState(initialData);
 
   /* Functions Here...*/
- 
+  const mutation = useMutation({
+    mutationFn: (payload) => getDashboardData(payload),
+    onSuccess: (fetchedData) => {
+      setData(fetchedData.data);
+    },
+  });
+
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    setData(initialData);
+    const PAY_LOAD = {
+      "campaign_id": 64,
+      "ba_id": null,
+      "city_id": null,
+      "startDate": null,
+      "endDate": null
+    }
+    mutation.mutate(PAY_LOAD);
+  };
   
   /*** Knocks Charts ******/
   
@@ -123,6 +162,7 @@ const Home = () => {
     const TSeries = [83]; 
 
   return (
+    
     <div className='dashboard_wrap'>
       
       <div className='dashboard_filter'>
@@ -139,6 +179,7 @@ const Home = () => {
               <div className='form_group'>
                 <select>
                   <option>select campaign</option>
+                  <option value="64">LML DDS & Tricycle ISB & AJK Zone</option>
                 </select>
               </div>
               <div className='form_group custom_date_picker'>
@@ -157,7 +198,7 @@ const Home = () => {
                 />
               </div>
               <div className='btn_group'>
-                <button>search</button>
+                <button onClick={handleSearch}>search</button>
                 <button>clear</button>
               </div>
             </form>
@@ -170,7 +211,7 @@ const Home = () => {
               </div>
               <div className='disc'>
                 <span>Total Knocks</span>
-                <h3>0</h3>
+                <h3>{mutation.isPending ? <DashboardTopLoader color="#487fff" /> : data.topBarData?.total_knocks || 0}</h3>
               </div>
               <img src={im1} />
           </div>
@@ -180,7 +221,7 @@ const Home = () => {
               </div>
               <div className='disc'>
                 <span>Doors Answered</span>
-                <h3>0</h3>
+                <h3>{mutation.isPending ? <DashboardTopLoader color="#45b369" /> : data.topBarData?.doors_answered || 0}</h3>
               </div>
               <img src={im2} />
           </div>
@@ -190,7 +231,7 @@ const Home = () => {
               </div>
               <div className='disc'>
                 <span>Productive Calls</span>
-                <h3>0</h3>
+                <h3>{mutation.isPending ? <DashboardTopLoader color="#f4941e" /> : data.topBarData?.productive_calls || 0}</h3>
               </div>
               <img src={im3} />
           </div>
@@ -200,7 +241,7 @@ const Home = () => {
               </div>
               <div className='disc'>
                 <span>Productivity</span>
-                <h3>0</h3>
+                <h3>{mutation.isPending ? <DashboardTopLoader color="#8252e9" /> : data.topBarData?.productivity || 0}</h3>
               </div>
               <img src={im4} />
           </div>
@@ -210,7 +251,7 @@ const Home = () => {
               </div>
               <div className='disc'>
                 <span>Revenue in PKR</span>
-                <h3>0</h3>
+                <h3>{mutation.isPending ? <DashboardTopLoader color="#de3ace" /> : data.topBarData?.total_revenue || 0}</h3>
               </div>
               <img src={im5} />
           </div>
@@ -220,7 +261,7 @@ const Home = () => {
               </div>
               <div className='disc'>
                 <span>Conversion Rate</span>
-                <h3>0</h3>
+                <h3>{mutation.isPending ? <DashboardTopLoader color="#00b8f2" /> : data.topBarData?.conversion_rate || 0}</h3>
               </div>
               <img src={im6} />
           </div>
@@ -229,8 +270,7 @@ const Home = () => {
            <div className='chart_box knocks'> 
               <h2>knocks</h2>
               <p className='txt'>Daywise Statistical Overview</p>
-              {/* <ReactApexChart options={options} series={series} type="bar" height={350} /> */}
-              <KnocksChart data={data?.knockData} isLoading={isLoading} />
+              <KnocksChart data={data?.knockData} isLoading={mutation.isPending} />
            </div>   
            <div className='chart_box target_achieve'> 
               <h2>Target Achieve</h2>

@@ -9,13 +9,31 @@ const KnocksChart = ({ data, isLoading }) => {
         plotOptions: { bar: { horizontal: false, columnWidth: '55%', endingShape: 'rounded' } },
         dataLabels: { enabled: false },
         stroke: { show: true, width: 2, colors: ['transparent'] },
-        xaxis: { categories: data?.map((item) => item.day) || [] },
+        xaxis: { 
+            categories: data?.map((item) => {
+                const date = new Date(item.day);
+                return date.toISOString().split('T')[0];
+            }) || []
+        },
         yaxis: { title: { text: 'Knocks' } },
         fill: { opacity: 1 },
         tooltip: { y: { formatter: (val) => `${val} knocks` } },
     };
 
-    const series = [{ name: 'Knocks', data: data?.map((item) => item.total_knocks) || [] }];
+    const series = [
+      { 
+        name: 'Knocks', 
+        data: data?.map((item) => item.total_knocks) || [] 
+      },
+      { 
+        name: 'Answered Knocks', 
+        data: data?.map((item) => item.answered_knocks) || [] 
+      },
+      { 
+        name: 'UnAnswered Knocks', 
+        data: data?.map((item) => item.unanswered_knocks) || [] 
+      }
+    ];
 
   return (
     <>

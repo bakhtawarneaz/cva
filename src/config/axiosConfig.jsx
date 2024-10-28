@@ -22,25 +22,15 @@ export const axiosPrivate = axios.create({
 // Request interceptor
 api.interceptors.request.use(
 	async (request) => {
-		// get user data from redux --> active account
-		const account = await store.getState().auth;
 
-		// get variables isLoggedIn and token from redux
+		const account = await store.getState().auth;
 		const isAuthenticated = account?.isAuthenticated;
 		const token = account?.token;
 
-		const xtUserToken = request.headers['xt-user-token'];
-		const xtClientToken = request.headers['xt-client-token'];
-
-		// if token and isLoggedIn true then it fetch the data
 		if (token && isAuthenticated) {
-			if (xtUserToken === null) {
-				request.headers["xt-user-token"] = `${token}`;
-			}
-			if (xtClientToken === null) {
-				request.headers["xt-client-token"] = `${token}`;
-			}
-		}
+            request.headers["xt-user-token"] = token;
+            request.headers["xt-client-token"] = token;
+        }
 
 		return request;
 	},
