@@ -20,6 +20,17 @@
     width: 300px;
     transition: all 0.2s, background 0s;
     height: 100%;
+    overflow-y: auto;
+}
+
+.sider::-webkit-scrollbar {
+    width: 3px;
+}
+.sider::-webkit-scrollbar-thumb {
+    background: #202f5f;
+}
+.sider::-webkit-scrollbar-track {
+    background: #d1d2d4;
 }
 
 .sidebar_logo {
