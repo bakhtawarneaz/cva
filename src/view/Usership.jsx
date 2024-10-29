@@ -2,7 +2,7 @@ import React from 'react'
 import ReactApexChart from 'react-apexcharts';
 import Loading from '@components/Loading';
 
-const KnocksChart = ({ data, isLoading }) => {
+const Usership = ({ data, isLoading }) => {
 
     const options = {
         chart: { type: 'bar', toolbar: { show: false } },
@@ -10,21 +10,18 @@ const KnocksChart = ({ data, isLoading }) => {
         dataLabels: { enabled: false },
         stroke: { show: true, width: 2, colors: ['transparent'] },
         xaxis: { 
-            categories: data?.map((item) => {
-                const date = new Date(item.day);
-                return date.toISOString().split('T')[0];
-            }) || []
+            categories: data?.map((item) => item.usership_name) || []
         },
-        yaxis: { title: { text: 'Knocks' } },
-        fill: { colors: ['#0162e8'] },
-        tooltip: { y: { formatter: (val) => `${val} knocks` } },
+        yaxis: { title: { text: 'Usership' } },
+        fill: { colors: ['#029666']  },
+        tooltip: { y: { formatter: (val) => `${val}` } },
     };
-
+    
     const series = [
-      { 
-        name: 'Knocks', 
-        data: data?.map((item) => item.total_knocks) || [] 
-      }
+        { 
+          name: 'Total Bought', 
+          data: data?.map((item) => item.total_bought) || [] 
+        }
     ];
 
   return (
@@ -34,4 +31,4 @@ const KnocksChart = ({ data, isLoading }) => {
   )
 }
 
-export default KnocksChart
+export default Usership

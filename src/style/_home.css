@@ -55,6 +55,7 @@
     right: 15px;
     top: 50%;
     transform: translateY(-50%);
+    width: 50px;
 }
 
 .top_bar .box .icon svg {
@@ -65,7 +66,7 @@
 .top_bar .box .disc h3 {
     font-family: var(--family);
     font-weight: var(--weight-regular);
-    font-size: var(--size22);
+    font-size: var(--size20);
     color: #111827;
 }
 
@@ -170,6 +171,14 @@
     font-weight: var(--weight-regular);
     text-transform: capitalize;
     cursor: pointer;
+    transition: 0.5s all;
+}
+
+.dashboard_filter form .btn_group button[disabled] {
+    background: #405189;
+    opacity: 0.4;
+    transition: 0.5s all;
+    cursor: not-allowed;
 }
  
 .dashboard_filter .custom_date_picker .rmdp-header {
@@ -368,5 +377,8 @@
         display: grid;
         grid-template-columns: 1fr 1fr 1fr;
         gap: 10px;
+    }
+    .top_bar .box img {
+        width: auto;
     }
 }

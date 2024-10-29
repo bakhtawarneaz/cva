@@ -1,5 +1,6 @@
+import api from '../config/axiosConfig';
+
 export const fetchCities = async () => {
-    const response = await api.get('https://glist.its.com.pk/v1/fetch/countries');
-    console.log(response.data);
+    const response = await api.get('/city/fetch');
     return response.data;
 };

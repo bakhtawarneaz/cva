@@ -15,16 +15,22 @@ import im3 from '@assets/3.png'
 import im4 from '@assets/4.png'
 import im5 from '@assets/5.png'
 import im6 from '@assets/6.png'
-import ReactApexChart from 'react-apexcharts';
 import KnocksChart from '@view/KnocksChart';
+import TargetAchieve from '@view/TargetAchieve';
+import Usership from '@view/Usership';
+import Pitches from '@view/Pitches';
+import Buyers from '@view/Buyers';
+import DoorAnswered from '@view/DoorAnswered';
+import Deals from '@view/Deals';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { getDashboardData } from '@api/dashboardApi';
 import DashboardTopLoader from '@components/DashboardTopLoader';
+import { fetchCities } from '@api/cityApi';
+import { fetchCampaigns } from '@api/campaignApi';
 
 const Home = () => {
 
   /* Variables Here...*/
-
   const initialData = {
     topBarData: {
       total_knocks: 0,
@@ -44,122 +50,97 @@ const Home = () => {
   };
   
   /* UseState Here...*/
-  const [value, setValue] = useState([]);
+  //const [value, setValue] = useState([]);
   const [data, setData] = useState(initialData);
+  const [campaigns, setCampaigns] = useState([]); 
+  const [selectedCity, setSelectedCity] = useState(null);
+  const [selectedCampaign, setSelectedCampaign] = useState(null);
+  const [dateRange, setDateRange] = useState([]);
+
 
   /* Functions Here...*/
-  const mutation = useMutation({
-    mutationFn: (payload) => getDashboardData(payload),
-    onSuccess: (fetchedData) => {
-      setData(fetchedData.data);
+
+  const { data: citiesData } = useQuery({
+      queryKey: ['cities'],
+      queryFn: () => fetchCities(),
+      staleTime: 10000,
+  });
+
+  const campaignMutation = useMutation({
+    mutationFn: (cityId) => fetchCampaigns({ campaign_id: null, city_id: cityId, brand_id: null }),
+    onSuccess: (response) => {
+      const campaignsList = response.data.fetchCampaign.campaigns || [];
+      setCampaigns(campaignsList);
     },
   });
 
+  const mutation = useMutation({
+    mutationFn: (payload) => getDashboardData(payload),
+    onSuccess: (response) => {
+      setData(response.data);
+    },
+  });
+
+  const handleCityChange = (e) => {
+    const cityId = e.target.value;
+    setSelectedCity(cityId);
+    if (cityId) {
+      campaignMutation.mutate(cityId);
+    } else {
+      setCampaigns([]);
+      setSelectedCampaign(null);
+    }
+  };
 
   const handleSearch = (e) => {
     e.preventDefault();
     setData(initialData);
+    const [startDate, endDate] = dateRange;
     const PAY_LOAD = {
-      "campaign_id": 64,
-      "ba_id": null,
-      "city_id": null,
-      "startDate": null,
-      "endDate": null
-    }
+      campaign_id: selectedCampaign || null,
+      city_id: selectedCity || null,
+      startDate: startDate ? new Date(startDate).toISOString().split('T')[0] : null,
+      endDate: endDate ? new Date(endDate).toISOString().split('T')[0] : null,
+      ba_id: null
+    };
     mutation.mutate(PAY_LOAD);
   };
-  
-  /*** Knocks Charts ******/
-  
-  const options = {
-    chart: {
-      type: 'bar',
-      toolbar: {
-        show: false
-      }
-    },
-    plotOptions: {
-      bar: {
-        horizontal: false,
-        columnWidth: '55%',
-        endingShape: 'rounded'
-      },
-    },
-    dataLabels: {
-      enabled: false
-    },
-    stroke: {
-      show: true,
-      width: 2,
-      colors: ['transparent']
-    },
-    xaxis: {
-      categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
-    },
-    yaxis: {
-      title: {
-        text: 'Values'
-      }
-    },
-    fill: {
-      opacity: 1
-    },
-    tooltip: {
-      y: {
-        formatter: (val) => `${val} units`
-      }
-    }
+
+  const handleClear = (e) => {
+    e.preventDefault();
+    setSelectedCity(null);
+    setSelectedCampaign(null);
+    setDateRange([]);
+    setData(initialData);
+    setCampaigns([]);
   };
-
-  const series = [
-    {
-      name: 'Series 1',
-      data: [44, 55, 41, 67, 22, 43, 21]
-    },
-    {
-      name: 'Series 2',
-      data: [13, 23, 20, 8, 13, 27, 33]
-    }
-  ];
-
-
-    /*** Target Achieve ******/
-    const tOptions = {
-      chart: {
-        type: 'radialBar',
-        height: 350,
-      },
-      plotOptions: {
-        radialBar: {
-          startAngle: -90,
-          endAngle: 90,
-          track: {
-            background: '#f0f0f0',
-            strokeWidth: '100%',
-          },
-          dataLabels: {
-            name: {
-              show: false,
-            },
-            value: {
-              offsetY: -10,
-              fontSize: '22px',
-              fontWeight: 600,
-              color: '#000',
-              formatter: function (val) {
-                return `${val}%`;
-              }
-            }
-          }
-        }
-      },
-      colors: ['#007bff'],
-      stroke: {
-        dashArray: 4
-      },
-    };
   
-    const TSeries = [83]; 
+  
+   /***** TargetAchieve ****/
+  const yesterdayDeals = data.topBarData.deals_sold_yesterday[0]?.deals_sold_yesterday || 0;
+  const yesterdayTotalDeals = data.topBarData.deals_sold_yesterday[0]?.number_of_deals || 0;
+  const yesterdayPercentage = data.topBarData.deals_sold_yesterday[0]?.percentage_yesterday || 0;
+
+  const monthDeals = data.topBarData.deals_sold_this_month[0]?.deals_sold_this_month || 0;
+  const monthTotalDeals = data.topBarData.deals_sold_this_month[0]?.number_of_deals || 0;
+  const monthPercentage = data.topBarData.deals_sold_this_month[0]?.percentage_this_month || 0;
+
+  /***** Pitches ****/
+  const totalPitches = data.pitchData?.total_pitches || 0;
+  const totalBought = data.pitchData?.total_bought || 0;
+
+  /***** Buyer ****/
+  const buyerData = data.buyerData || [];
+
+ /***** DoorAnswered ****/
+  const doorsAnswered = data.topBarData?.doors_answered || 0;
+  const totalKnocks = data.topBarData?.total_knocks || 0;
+  const doorsNotAnswered = totalKnocks - doorsAnswered;
+
+  /***** Deal ****/
+  const dealData = data.dealData || [];
+
+  const isSearchDisabled = !selectedCity || !selectedCampaign || dateRange.length < 2;
 
   return (
     
@@ -172,20 +153,29 @@ const Home = () => {
          <div className='right'>
             <form>
               <div className='form_group'>
-                <select>
-                  <option>select city</option>
+                <select onChange={handleCityChange} value={selectedCity || ''}>
+                  <option value="">select city</option>
+                  {
+                    citiesData?.data.fetchCity.map(city => (
+                      <option key={city.id} value={city.id}>{city.name}</option>
+                    ))
+                  }
                 </select>
               </div>
               <div className='form_group'>
-                <select>
-                  <option>select campaign</option>
-                  <option value="64">LML DDS & Tricycle ISB & AJK Zone</option>
+                <select onChange={(e) => setSelectedCampaign(e.target.value)} value={selectedCampaign || ''}>
+                  <option value="">select campaign</option>
+                  {
+                    campaigns.map(campaign => (
+                      <option key={campaign.id} value={campaign.id}>{campaign.name}</option>
+                    ))
+                  }
                 </select>
               </div>
               <div className='form_group custom_date_picker'>
                 <DatePicker 
-                  value={value} 
-                  onChange={setValue} 
+                  value={dateRange} 
+                  onChange={setDateRange} 
                   range 
                   dateSeparator=" - "
                   numberOfMonths={2}
@@ -198,8 +188,8 @@ const Home = () => {
                 />
               </div>
               <div className='btn_group'>
-                <button onClick={handleSearch}>search</button>
-                <button>clear</button>
+                <button onClick={handleSearch} disabled={isSearchDisabled}>search</button>
+                <button onClick={handleClear}>clear</button>
               </div>
             </form>
          </div>
@@ -277,51 +267,61 @@ const Home = () => {
               <p className='txt'>Number of Deals, sold till now</p>
               <div className='target_chart_wrap'>
                   <div className='left'>
-                    <ReactApexChart options={tOptions} series={TSeries} type="radialBar" height={350} />
-                    <div className='content'> 
-                       <p>Yesterday Target Achieve</p>
-                       <span className='s1'>deals sold</span> 
-                       <span className='s2'>total entries</span> 
-                    </div>
+                    <TargetAchieve 
+                      dealsSold={yesterdayDeals} 
+                      totalDeals={yesterdayTotalDeals} 
+                      percentage={yesterdayPercentage} 
+                      title="Yesterday Target Achieve" 
+                      isLoading={mutation.isPending}
+                    />
                   </div>
                   <div className='right'>
-                    <ReactApexChart options={tOptions} series={TSeries} type="radialBar" height={350} />
-                    <div className='content'> 
-                       <p>Monthly Target Achieve</p>
-                       <span className='s1'>deals sold</span> 
-                       <span className='s2'>total entries</span> 
-                    </div>
+                    <TargetAchieve 
+                        dealsSold={monthDeals} 
+                        totalDeals={monthTotalDeals} 
+                        percentage={monthPercentage} 
+                        title="Monthly Target Achieve" 
+                        isLoading={mutation.isPending}
+                      />
                   </div>
               </div>
            </div>  
            <div className='chart_box usership'> 
               <h2>usership</h2>
               <p className='txt'>Statistical overview of customers, who have bought and didn't bought the deals</p>
-              <ReactApexChart options={options} series={series} type="bar" height={350} />
+              <Usership data={data?.userShipData} isLoading={mutation.isPending} />
            </div>
            <div className='chart_box pitches'> 
               <h2>pitches</h2>
               <p className='txt'>Ratio of pitches listened and buy</p>
-              <ReactApexChart options={options} series={series} type="bar" height={350} />
+              <Pitches 
+                totalPitches={totalPitches} 
+                totalBought={totalBought} 
+                isLoading={mutation.isPending} 
+              />
            </div>   
        </div>           
        <div className='chart_wrap buyers_chart'>
            <div className='chart_box'> 
               <h2>buyers chart</h2>
               <p className='txt'>Number of deals purchased by unique customers</p>
-              <ReactApexChart options={options} series={series} type="bar" height={350} />
+              <Buyers buyerData={buyerData} isLoading={mutation.isPending} />
            </div>   
        </div> 
        <div className='chart_wrap'>
            <div className='chart_box door_answered'> 
               <h2>door answered</h2>
               <p className='txt'>Ratio of Non Associated and Associated Userships</p>
-              <ReactApexChart options={options} series={series} type="bar" height={350} />
+              <DoorAnswered 
+                  doorsAnswered={doorsAnswered} 
+                  doorsNotAnswered={doorsNotAnswered} 
+                  isLoading={mutation.isPending} 
+              />
            </div>   
            <div className='chart_box deals'> 
               <h2>deals</h2>
               <p className='txt'>Number of Deals, sold till now</p>
-              <ReactApexChart options={options} series={series} type="bar" height={350} />
+              <Deals dealData={dealData} isLoading={mutation.isPending} />
            </div>   
        </div> 
 
