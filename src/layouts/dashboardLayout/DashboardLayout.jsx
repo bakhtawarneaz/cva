@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react'
 import {  Navigate, Outlet } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { TfiLayoutGrid2 } from "react-icons/tfi";
 import { MdOutlineLightMode } from "react-icons/md";
 import { FaRegUser } from "react-icons/fa";
@@ -12,11 +12,13 @@ import hand from '@assets/hand.gif';
 import { RxDashboard } from "react-icons/rx";
 import '@styles/_dashboard.css';
 import BackToTopButton from '@components/BackToTopButton';
+import { logout } from '@slice/authSlice';
 
 const DashboardLayout = () => {
 
   /* Redux Here...*/
   const token  = useSelector((state) => state.auth.token);
+  const dispatch = useDispatch();
 
   /* UseState Here...*/
   const [isVisible, setIsVisible] = useState(false);
@@ -42,6 +44,8 @@ const DashboardLayout = () => {
   if (token === null) {
     return <Navigate to={'/auth/login'} replace />;
   }
+
+  const handleLogout = () => dispatch(logout());
 
   return (
     <div className='site-wraper'>
@@ -83,7 +87,7 @@ const DashboardLayout = () => {
                         <button onMouseDown={toggleVisibility}><FaRegUser /></button>
                         <div ref={profileRef} className={`profile ${isVisible ? 'visible' : ''}`}>
                           <ul>
-                            <li><IoIosLogOut /><span>Log Out</span></li>
+                            <li onClick={handleLogout}><IoIosLogOut /><span>Log Out</span></li>
                           </ul>
                         </div>
                     </div>

@@ -27,6 +27,7 @@ import { getDashboardData } from '@api/dashboardApi';
 import DashboardTopLoader from '@components/DashboardTopLoader';
 import { fetchCities } from '@api/cityApi';
 import { fetchCampaigns } from '@api/campaignApi';
+import ButtonLoader from '@components/ButtonLoader';
 
 const Home = () => {
 
@@ -188,7 +189,13 @@ const Home = () => {
                 />
               </div>
               <div className='btn_group'>
-                <button onClick={handleSearch} disabled={isSearchDisabled}>search</button>
+                <button onClick={handleSearch} disabled={isSearchDisabled}>
+                  {mutation.isPending ? (
+                        <ButtonLoader />
+                      ) : (
+                        "search"
+                  )}
+                </button>
                 <button onClick={handleClear}>clear</button>
               </div>
             </form>

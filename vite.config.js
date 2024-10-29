@@ -19,6 +19,7 @@ export default defineConfig({
       '@layouts': path.resolve(__dirname, 'src/layouts'),
       '@icon': path.resolve(__dirname, 'src/icons'),
       '@helper': path.resolve(__dirname, 'src/helpers'),
+      '@slice': path.resolve(__dirname, 'src/redux/slices'),
     },
   },
   define: {

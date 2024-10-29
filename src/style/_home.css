@@ -172,6 +172,8 @@
     text-transform: capitalize;
     cursor: pointer;
     transition: 0.5s all;
+    position: relative;
+    height: 40px;
 }
 
 .dashboard_filter form .btn_group button[disabled] {
