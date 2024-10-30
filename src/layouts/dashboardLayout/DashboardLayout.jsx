@@ -22,6 +22,7 @@ const DashboardLayout = () => {
 
   /* UseState Here...*/
   const [isVisible, setIsVisible] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   /* Variables Here...*/
   const currentYear = new Date().getFullYear();
@@ -47,9 +48,11 @@ const DashboardLayout = () => {
 
   const handleLogout = () => dispatch(logout());
 
+  const toggleSidebar = () => setIsSidebarCollapsed((prev) => !prev);;
+
   return (
     <div className='site-wraper'>
-      <aside className="sidebar">
+      <aside className={`sidebar ${isSidebarCollapsed ? 'collapsed' : 'expanded'}`}>
         <div className='sider'>
           <div className='sidebar_logo'>
               <div className="site_logo">
@@ -57,7 +60,7 @@ const DashboardLayout = () => {
                 <h1>cva</h1>
               </div>
               <div className="toggle_sidebar">
-                <div className="toggle_icon">
+                <div className="toggle_icon" onClick={toggleSidebar}>
                   <RxDashboard />
                 </div>
               </div>

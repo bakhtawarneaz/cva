@@ -11,9 +11,19 @@
     position: relative;
     background: #405189;
     box-shadow: 0 0.125rem 0.25rem rgba(165, 163, 174, 0.3);
+    transition: width 0.3s ease;
+}
+
+.sidebar.expanded{
     width: 100%;
     max-width: 300px;
 }
+
+.sidebar.collapsed {
+    width: 100%;
+    max-width: 80px; 
+    transition: width 0.3s ease;
+  }
 
 .sider {
     position: fixed;
