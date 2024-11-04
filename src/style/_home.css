@@ -208,10 +208,13 @@
 /********** Chart ************/
 
 .chart_wrap {
-    display: grid;
+    /* display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 15px;
-    margin-top: 25px;
+    margin-top: 25px; */
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
 }
 
 .chart_box {
@@ -220,6 +223,8 @@
     border: 1px solid #eae8f1;
     box-shadow: -8px 12px 18px 0 #dadee8;
     border-radius: 5px;
+    width: 49%;
+    margin-top: 25px;
 }
 
 .chart_box h2 {

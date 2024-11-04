@@ -11,18 +11,22 @@
     position: relative;
     background: #405189;
     box-shadow: 0 0.125rem 0.25rem rgba(165, 163, 174, 0.3);
-    transition: width 0.3s ease;
 }
 
 .sidebar.expanded{
-    width: 100%;
+    flex: 0 0 300px;
     max-width: 300px;
+    min-width: 300px;
+    width: 300px;
+    transition: all 0.2s, background 0s;
 }
 
 .sidebar.collapsed {
-    width: 100%;
-    max-width: 80px; 
-    transition: width 0.3s ease;
+    flex: 0 0 80px;
+    max-width: 80px;
+    min-width: 80px;
+    width: 80px;
+    transition: all 0.2s, background 0s;
   }
 
 .sider {
@@ -31,6 +35,43 @@
     transition: all 0.2s, background 0s;
     height: 100%;
     overflow-y: auto;
+    z-index: 99;
+}
+
+.sidebar.collapsed .sider{
+    width: 80px;
+    overflow-y: unset;
+    transition: all 0.2s, background 0s;
+}
+
+.sidebar.collapsed .sidebar_logo {
+    padding: 20px 10px;
+}
+
+.sidebar.collapsed h1 {
+    display: none;
+}
+
+.sidebar.collapsed .sidebar_menu {
+    padding: 0 10px;
+}
+
+.sidebar.collapsed .sidebar_menu li a svg {
+    margin: 0;
+    font-size: var(--size25);
+    transition: 0.5s all;
+}
+
+.sidebar.collapsed .sidebar_menu li a {
+    display: block;
+    padding: 15px 10px;
+    text-align: center;
+}
+
+.sidebar.collapsed .sidebar_menu li a span {
+    transform: scale(0);
+    transition: 0.5s all;
+    display: none;
 }
 
 .sider::-webkit-scrollbar {
@@ -79,6 +120,22 @@
     font-size: var( --size22);
 }
 
+.header_left .toggle_icon {
+    height: 40px;
+    width: 40px;
+    background-color: rgb(32 47 95 / 11%);
+    border-radius: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.header_left .toggle_icon svg {
+    color: #202f5f;
+    font-size: var(--size22);
+}
+
 .sidebar_logo img {
     width: 50px;
 }
@@ -97,6 +154,7 @@
 
 .sidebar_menu li {
     list-style: none;
+    position: relative;
 }
 
 .sidebar_menu li a {
@@ -117,6 +175,7 @@
     font-size: var( --size20);
     margin-right: 15px;
     color: #fff;
+    transition: 0.5s all;
 }
 
 .sidebar_menu li a span {
@@ -124,6 +183,8 @@
     font-weight: var(--weight-regular);
     font-size: var(--size16);
     color: #fff;
+    transform: scale(1);
+    transition: 0.5s all;
 }
 
 .sidebar_menu li a .sub_menu_icon {
@@ -194,14 +255,72 @@
     left: 20px;
 }
 
+.hover_sub_menu {
+    position: absolute;
+    left: 100%;
+    top: 0;
+    display: block;
+    background-color: #fff;
+    padding: 0;
+    border-radius: 4px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    height: 300px;
+    overflow-y: auto;
+    width: 250px;
+}
+  
+.sidebar.collapsed .sub_menu {
+    display: none;
+}
+
+.hover_sub_menu::-webkit-scrollbar {
+    width: 3px;
+}
+.hover_sub_menu::-webkit-scrollbar-thumb {
+    background: #202f5f;
+}
+.hover_sub_menu::-webkit-scrollbar-track {
+    background: #d1d2d4;
+}
+
+.sidebar.collapsed .hover_sub_menu li{
+    border-bottom:1px solid #d1d2d4;
+}
+
+.sidebar.collapsed .hover_sub_menu li:last-child{
+    border:0;
+}
+  
+.sidebar.collapsed .hover_sub_menu li a {
+    text-align: left;
+    padding: 10px 20px;
+    font-family: var(--family);
+    font-weight: var(--weight-regular);
+    font-size: var(--size14);
+    margin:0;
+    color:#000;
+    transition:0.5s all;
+    border-radius:0;
+}
+
+.sidebar.collapsed .hover_sub_menu li a:hover{
+    color:#fff;
+    background: #202f5f;
+    transition:0.5s all;
+}
+
 
 /********* Site Main and Header********/
 
 .site_main {
-    width: 100%;
+    width: calc(100% - 300px);
     background: #ededed;
     display: flex;
     flex-direction: column;
+}
+
+.site_main.active {
+    width: calc(100% - 80px);
 }
 
 .main_header {
@@ -308,6 +427,9 @@
 
 .header_left {
     width: 50%;
+    display: flex;
+    align-items: center;
+    gap: 15px;
 }
 
 .header_left h4 {

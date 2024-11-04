@@ -59,24 +59,33 @@ const DashboardLayout = () => {
                 <img src={AuthFormLogo} alt='' />
                 <h1>cva</h1>
               </div>
-              <div className="toggle_sidebar">
-                <div className="toggle_icon" onClick={toggleSidebar}>
-                  <RxDashboard />
+              {!isSidebarCollapsed && (
+                <div className="toggle_sidebar">
+                  <div className="toggle_icon" onClick={toggleSidebar}>
+                    <RxDashboard />
+                  </div>
                 </div>
-              </div>
+              )}
           </div>
           <ul className='sidebar_menu'>
             {MenuItems.map((item, index) => (
-                <MenuList item={item} key={index} />
+                <MenuList item={item} key={index} isSidebarCollapsed={isSidebarCollapsed} />
             ))}
           </ul>
         </div>
       </aside>
-      <main className="site_main">
+      <main className={`site_main ${isSidebarCollapsed ? 'active' : ''}`}>
           <header className="main_header">
             <div className='header_left'>
-                <h4>welcome - <span>super admin</span> <img src={hand} alt="hand-gif" /></h4>
-                <p>Here’s what’s happening today...!</p>
+                {isSidebarCollapsed && (
+                  <div className="toggle_icon" onClick={toggleSidebar}>
+                    <RxDashboard />
+                  </div>
+                )}
+                <div className='profile_cover_content'>
+                  <h4>welcome - <span>super admin</span> <img src={hand} alt="hand-gif" /></h4>
+                  <p>Here’s what’s happening today...!</p>
+                </div>
             </div>
             <div className="header-right">
                   <div className='profile_cover'>

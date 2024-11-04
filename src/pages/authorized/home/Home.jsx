@@ -306,16 +306,35 @@ const Home = () => {
                 totalBought={totalBought} 
                 isLoading={mutation.isPending} 
               />
+           </div>  
+           <div className='chart_box buyers_chart'> 
+              <h2>buyers chart</h2>
+              <p className='txt'>Number of deals purchased by unique customers</p>
+              <Buyers buyerData={buyerData} isLoading={mutation.isPending} />
+           </div>  
+           <div className='chart_box door_answered'> 
+              <h2>door answered</h2>
+              <p className='txt'>Ratio of Non Associated and Associated Userships</p>
+              <DoorAnswered 
+                  doorsAnswered={doorsAnswered} 
+                  doorsNotAnswered={doorsNotAnswered} 
+                  isLoading={mutation.isPending} 
+              />
            </div>   
+           <div className='chart_box deals'> 
+              <h2>deals</h2>
+              <p className='txt'>Number of Deals, sold till now</p>
+              <Deals dealData={dealData} isLoading={mutation.isPending} />
+           </div> 
        </div>           
-       <div className='chart_wrap buyers_chart'>
+       {/* <div className='chart_wrap buyers_chart'>
            <div className='chart_box'> 
               <h2>buyers chart</h2>
               <p className='txt'>Number of deals purchased by unique customers</p>
               <Buyers buyerData={buyerData} isLoading={mutation.isPending} />
            </div>   
-       </div> 
-       <div className='chart_wrap'>
+       </div>  */}
+       {/* <div className='chart_wrap'>
            <div className='chart_box door_answered'> 
               <h2>door answered</h2>
               <p className='txt'>Ratio of Non Associated and Associated Userships</p>
@@ -330,7 +349,7 @@ const Home = () => {
               <p className='txt'>Number of Deals, sold till now</p>
               <Deals dealData={dealData} isLoading={mutation.isPending} />
            </div>   
-       </div> 
+       </div>  */}
 
     </div>
   )
