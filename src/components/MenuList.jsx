@@ -34,6 +34,7 @@ const MenuList = ({ item, isSidebarCollapsed }) => {
           to={item.path || '#'} 
           onClick={!isSidebarCollapsed && item.children ? toggleSubmenu : null}
           className={isActive ? 'active' : ''}
+          //title={isSidebarCollapsed ? item.title : ''}
           >
           {item.icon} <span>{item.title}</span>
           {item.children && (
@@ -43,35 +44,38 @@ const MenuList = ({ item, isSidebarCollapsed }) => {
           )}
         </Link>
 
-        {/* Render submenus only if item has children */}
-        {item.children && (
-            <>
-              {/* Click-based submenu */}
-              <ul
-                ref={submenuRef}
-                className={`sub_menu ${isOpen ? 'active' : ''}`}
-              >
-                {item.children.map((subItem, index) => (
-                  <li key={index}>
-                    <Link to={subItem.path} className={location.pathname === subItem.path ? 'active' : ''}>
-                      {subItem.title}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-              {/* Hover-based submenu for collapsed sidebar */}
-              {isSidebarCollapsed && isHovering && (
-                <ul className='hover_sub_menu'>
-                  {item.children.map((subItem, index) => (
-                    <li key={index}>
-                      <Link to={subItem.path} className={location.pathname === subItem.path ? 'active' : ''}>
-                        {subItem.title}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              )}
-          </>
+         {/* Render the tooltip when sidebar is collapsed and item is being hovered */}
+          {isSidebarCollapsed && isHovering && (
+            <div className="tooltip visible">{item.title}</div>
+          )}
+
+        {/* Render submenu only if sidebar is not collapsed */}
+        {!isSidebarCollapsed && item.children && (
+          <ul
+            ref={submenuRef}
+            className={`sub_menu ${isOpen ? 'active' : ''}`}
+          >
+            {item.children.map((subItem, index) => (
+              <li key={index}>
+                <Link to={subItem.path} className={location.pathname === subItem.path ? 'active' : ''}>
+                  {subItem.title}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
+
+        {/* When sidebar is collapsed, render hover-based submenu */}
+        {isSidebarCollapsed && isHovering && item.children && (
+          <ul className='hover_sub_menu'>
+            {item.children.map((subItem, index) => (
+              <li key={index}>
+                <Link to={subItem.path} className={location.pathname === subItem.path ? 'active' : ''}>
+                  {subItem.title}
+                </Link>
+              </li>
+            ))}
+          </ul>
         )}
       </li>
     </>

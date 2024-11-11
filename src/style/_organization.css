@@ -1,0 +1,14 @@
+.top_bar_heading h2 {
+    font-family: var(--family);
+    font-weight: var(--weight-regular);
+    font-size: var(--size16);
+    text-transform: capitalize;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.top_bar_heading h2 .icon {
+    transform: translateY(3px);
+}
+

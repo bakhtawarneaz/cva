@@ -30,3 +30,11 @@ body::-webkit-scrollbar-track {
   --size12: 12px;
   --primary-color:#202f5f;
 }
+
+body{
+  height: 100vh;
+}
+
+#root {
+  height: 100%;
+}

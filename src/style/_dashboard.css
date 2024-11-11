@@ -273,6 +273,10 @@
     display: none;
 }
 
+.sidebar.collapsed .hover_sub_menu li a.active {
+    color: #fff;
+}
+
 .hover_sub_menu::-webkit-scrollbar {
     width: 3px;
 }
@@ -486,3 +490,41 @@ footer p {
     font-family: var(--family);
     font-weight: var(--weight-regular);
 }
+
+
+/* Tooltip */
+.tooltip {
+    position: absolute;
+    top: 50%;
+    left: 100%;
+    transform: translateX(10px) translateY(-50%);
+    padding: 5px 15px;
+    background-color: #333;
+    color: white;
+    font-size: 14px;
+    border-radius: 4px;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    white-space: nowrap;
+    transition: 0.5s all;
+    font-family: var(--family);
+    font-weight: var(--weight-regular);
+  }
+  
+  .tooltip.visible {
+    opacity: 1;
+    visibility: visible;
+    transition: 0.5s all;
+  }
+  
+  .tooltip::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: -5px;
+    transform: translateY(-50%);
+    border: 5px solid transparent;
+    border-right-color: #333;
+  }
+  

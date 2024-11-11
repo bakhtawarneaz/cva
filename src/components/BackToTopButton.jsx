@@ -2,8 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { FaChevronUp } from "react-icons/fa6";
 
 const BackToTopButton = () => {
+
+    /* UseState Here...*/
     const [showButton, setShowButton] = useState(false);
 
+
+    /* Hooks Here...*/
     useEffect(() => {
         const handleScroll = () => {
             if (window.scrollY > 300) {
@@ -18,6 +22,7 @@ const BackToTopButton = () => {
         };
     }, []);
 
+    /* Functions Here...*/
     const scrollToTop = () => {
         window.scrollTo({
             top: 0,
