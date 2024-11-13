@@ -12,3 +12,46 @@
     transform: translateY(3px);
 }
 
+.modal_body .inner_form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.modal_body form .form_group {
+    display: flex;
+    flex-direction: column;
+}
+
+.modal_body form .form_group label {
+    color: #5d596c;
+    font-family: var(--family);
+    font-weight: var(--weight-regular);
+    font-size: var(--size16);
+    text-transform: capitalize;
+}
+
+.modal_body form .form_group .form_control {
+    width: 100%;
+    border: 1px solid #dbdade;
+    color: #6f6b7d;
+    border-radius: 5px;
+    padding: 12px 15px;
+    outline: none;
+    font-family: var(--family);
+    font-weight: var(--weight-regular);
+    font-size: var(--size14);
+}
+
+.modal_body form .form_group textarea {
+    width: 100%;
+    border: 1px solid #dbdade;
+    color: #6f6b7d;
+    border-radius: 5px;
+    padding: 12px 15px;
+    outline: none;
+    font-family: var(--family);
+    font-weight: var(--weight-regular);
+    font-size: var(--size14);
+    resize: none;
+}
