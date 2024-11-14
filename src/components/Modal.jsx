@@ -22,8 +22,6 @@ const Modal = ({ isOpen, onClose, children }) => {
         </button>
         {children}
       </div>
-      <div className="modal_footer">
-      </div>
     </div>
   );
 };
