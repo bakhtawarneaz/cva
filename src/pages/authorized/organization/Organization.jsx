@@ -11,11 +11,15 @@ import { createOrganization } from '@api/organizationApi';
 import { uploadFile } from '@api/uploadApi';
 import toast from 'react-hot-toast';
 import { FaRegTrashAlt } from "react-icons/fa";
+import { useSelector } from 'react-redux';
+import ButtonLoader from '@components/ButtonLoader';
 
 const Organization = () => {
 
-  const { register, handleSubmit, formState: { errors }, clearErrors } = useForm();
+  const { register, handleSubmit, formState: { errors }, setValue, clearErrors, reset } = useForm();
 
+  /* Redus State Here...*/
+  const userId = useSelector((state) => state.auth.user.id);
 
    /* UseState Here...*/
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -41,15 +45,17 @@ const Organization = () => {
 
 
   /* Functions Here...*/
-  const onSubmit = (e) => {
-    e.preventDefault();
+  const onSubmit = (data) => {
+    const countryID = countryData?.data?.countries?.find(country => country.name === data.country);
     const PAY_LOAD = {
       ...data,
-      country_id: 14,
-      created_by: 13,
-      logo: uploadedImage
+      country_id: parseInt(countryID.id),
+      created_by: parseInt(userId),
     };
     mutation.mutate(PAY_LOAD);
+    reset();
+    handleResetUpload();
+    //closeModal();
   };
 
   const handleFileChange = async (e) => {
@@ -58,7 +64,6 @@ const Organization = () => {
     const file = e.target.files[0];
     const formData = new FormData();
     formData.append('image', file);
-
     const simulateProgress = () => {
       setProgress((prev) => {
         if (prev >= 100) {
@@ -69,13 +74,14 @@ const Organization = () => {
       });
     };
     const progressInterval = setInterval(simulateProgress, 100);
-
     try {
       const response = await uploadFile(formData); 
       clearInterval(progressInterval);
       setProgress(100);
       setUploadedImage(response.data.link); 
+      setValue('logo', response.data.link);
       toast.success('File uploaded successfully!');
+      clearErrors('logo');
     } catch (error) {
       clearInterval(progressInterval);
       setProgress(0);
@@ -98,11 +104,14 @@ const Organization = () => {
     if (fileInputRef.current) {
       fileInputRef.current.value = ''; 
     }
+    setValue('logo', '');
   };
 
   const closeModal = () => {
     setIsModalOpen(false);
     clearErrors();
+    handleResetUpload();
+    reset();
   };
 
   return (
@@ -144,7 +153,7 @@ const Organization = () => {
     {/* Modal */}
     <Modal isOpen={isModalOpen} onClose={closeModal}>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <h3>create organization:</h3>
+        <h3>organization</h3>
         <div className='form_group form_group_upload'>
           <div className='custom_upload' onClick={openFileDialog}>
               {!isUploading && !uploadedImage && (
@@ -209,7 +218,7 @@ const Organization = () => {
             <option value="">select country</option>
             {
               countryData?.data?.countries?.map(country => (
-                <option key={country.id} value={country.id}>{country.name}</option>
+                <option key={country.id} value={country.name}>{country.name}</option>
               ))
             }
           </select>
@@ -229,7 +238,13 @@ const Organization = () => {
         </div>
         <div className='modal_btn_cover'>
           <button type="submit" className='cancel' onClick={closeModal}>cancel</button>
-          <button type="submit" className='btn'>create</button>
+          <button type="submit" className='btn' disabled={mutation.isPending}>
+            {mutation.isPending ? (
+                  <ButtonLoader />
+                ) : (
+                  "create"
+            )}
+          </button>
         </div>
       </form>
     </Modal>

@@ -131,6 +131,12 @@
     text-transform: capitalize;
 }
 
+.modal_btn_cover .btn[disabled] {
+    background: #405189;
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
 .custom_upload {
     background: rgba(0, 0, 0, 0.02);
     width: 120px;
