@@ -13,6 +13,8 @@ import toast from 'react-hot-toast';
 import { FaRegTrashAlt } from "react-icons/fa";
 import { useSelector } from 'react-redux';
 import ButtonLoader from '@components/ButtonLoader';
+import { LuRefreshCw } from "react-icons/lu";
+import { CiExport } from "react-icons/ci";
 
 const Organization = () => {
 
@@ -120,11 +122,12 @@ const Organization = () => {
       
       {/* BreadCrumb */}
       <div className='top_bar_heading'>
-          <h2>
+          <h2>organization <span>0</span></h2>
+          <div className='breadCrumb'>
             <span>home</span>
             <span className='icon'><IoChevronForwardOutline /></span>
             <span>organizations</span>
-          </h2>
+          </div>
       </div>
 
       {/* Table */}
@@ -134,6 +137,14 @@ const Organization = () => {
 
           </div>
           <div className='right'> 
+            <div className='btn_reload'>
+               <LuRefreshCw />
+               <button>reload</button>
+            </div>
+            <div className='btn_export'>
+                <CiExport />
+                <button>export</button>
+            </div>
             <div className='btn_cover' onClick={() => setIsModalOpen(true)}>
               <FiPlus />
               <button>add organization</button>

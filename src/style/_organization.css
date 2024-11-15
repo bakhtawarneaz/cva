@@ -1,16 +1,100 @@
+.top_bar_heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 20px 0 40px;
+}
+
 .top_bar_heading h2 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
     font-family: var(--family);
-    font-weight: var(--weight-regular);
-    font-size: var(--size16);
+    font-weight: var(--weight-bold);
+    font-size: var(--size25);
     text-transform: capitalize;
+}
+
+.top_bar_heading h2 span {
+    background: #202f5f;
+    color: #fff;
+    font-weight: var(--weight-regular);
+    font-size: var(--size20);
+    border-radius: 50px;
+    padding: 0px 20px;
+}
+
+.breadCrumb {
     display: flex;
     align-items: center;
     gap: 10px;
 }
 
-.top_bar_heading h2 .icon {
+.breadCrumb span{
+    font-family: var(--family);
+    font-weight: var(--weight-regular);
+    font-size: var(--size16);
+    text-transform: capitalize;
+}
+
+.breadCrumb .icon {
     transform: translateY(3px);
 }
+
+.card_header .right .btn_reload {
+    border: 1px solid #dbdade;
+    box-shadow: 0px 2px 4px rgba(165, 163, 174, 0.4);
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+}
+
+.card_header .right .btn_reload svg {
+    margin-right: 10px;
+    font-size: var(--size20);
+    color: #000;
+}
+
+.card_header .right .btn_reload button {
+    font-family: var(--family);
+    font-weight: var(--weight-regular);
+    font-size: var(--size14);
+    text-transform: capitalize;
+    background: transparent;
+    border: 0;
+    color: #000;
+    cursor: pointer;
+}
+
+.card_header .right .btn_export {
+    border: 1px solid #dbdade;
+    box-shadow: 0px 2px 4px rgba(165, 163, 174, 0.4);
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+}
+
+.card_header .right .btn_export svg {
+    margin-right: 10px;
+    font-size: var(--size20);
+    color: #000;
+}
+
+.card_header .right .btn_export button {
+    font-family: var(--family);
+    font-weight: var(--weight-regular);
+    font-size: var(--size14);
+    text-transform: capitalize;
+    background: transparent;
+    border: 0;
+    color: #000;
+    cursor: pointer;
+}
+
 
 .modal_body .inner_form {
     display: grid;
