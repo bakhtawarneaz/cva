@@ -15,6 +15,12 @@ import { useSelector } from 'react-redux';
 import ButtonLoader from '@components/ButtonLoader';
 import { LuRefreshCw } from "react-icons/lu";
 import { CiExport } from "react-icons/ci";
+import { getOrganization } from '@api/organizationApi';
+import TableComponent from '@components/TableComponent';
+import PaginationComponent from '@components/PaginationComponent';
+import { FiEdit } from "react-icons/fi";
+import { TfiWorld } from "react-icons/tfi";
+import { Link } from 'react-router-dom';
 
 const Organization = () => {
 
@@ -29,9 +35,24 @@ const Organization = () => {
   const [uploadedImage, setUploadedImage] = useState(''); 
   const [progress, setProgress] = useState(0);
   const fileInputRef = useRef(null); 
+  const [currentPage, setCurrentPage] = useState(1);
 
+  /* Variables Here...*/
+  const page = 1;
+  const perPage = 10;
 
+  const PARAMS = {
+    page: currentPage,
+    per_page: perPage,
+  };
+
+  
   /* Hooks...*/
+  const { data: organizationData, isLoading } = useQuery({
+    queryKey: ['organization', currentPage],
+    queryFn: () => getOrganization(PARAMS),
+  });
+
   const { data: countryData } = useQuery({
       queryKey: ['country'],
       queryFn: () => fetchCountry(),
@@ -44,6 +65,9 @@ const Organization = () => {
       toast.success('Organization Create Successfully...!');
     },
   });
+
+  const organization = organizationData?.data?.clients?.data || [];
+  const meta = organizationData?.data?.clients?.meta || {};
 
 
   /* Functions Here...*/
@@ -116,13 +140,40 @@ const Organization = () => {
     reset();
   };
 
+  /* Table code Here...*/
+
+  const handlePageChange = (page) => {
+    if (page > 0 && page <= (meta?.totalPages)) {
+      setCurrentPage(page);
+    }
+  };
+
+  const columns = [
+    { key: "id", label: "ID" },
+    {
+      key: "logo",
+      label: "Logo",
+      render: (row) => <img src={row.logo} alt={row.company} />,
+    },
+    { key: "company", label: "Name" },
+    { key: "number", label: "Phone" },
+    { key: "email", label: "Email" },
+    { key: "website", label: "Website", render: (row) => <Link to={row.website}><TfiWorld /></Link>, },
+    { key: "address", label: "Address" },
+    { key: "country", label: "Country" },
+    { key: "onboarding_date", label: "Onboarding" },
+    { key: "enabled", label: "Status" },
+  ];
+
+
+
   return (
     <>
     <div className='organization_wrap'>
       
       {/* BreadCrumb */}
       <div className='top_bar_heading'>
-          <h2>organization <span>0</span></h2>
+          <h2>organization <span>{meta.total}</span></h2>
           <div className='breadCrumb'>
             <span>home</span>
             <span className='icon'><IoChevronForwardOutline /></span>
@@ -152,10 +203,29 @@ const Organization = () => {
           </div>
         </div>
         <div className='card_body'>
-
+            <TableComponent
+            columns={columns}
+            data={organization}
+            isLoading={isLoading}
+            renderActions={(row) => (
+              <span>
+                <FiEdit />
+              </span>
+            )}
+            actionLabel="Action"
+          />
         </div>
         <div className='card_footer'>
-
+          <div className='left'>
+              <p>
+                Showing {meta.total === 0 ? 0 : (meta.currentPage - 1) * meta.perPage + 1} {' '}
+                to {Math.min(meta.currentPage * meta.perPage, meta.total)} {' '}
+                of {meta.total} entries
+              </p>
+          </div>
+          <div className='right'>
+            {organization.length > 0 && <PaginationComponent meta={meta} onPageChange={handlePageChange} />}
+          </div>
         </div>
       </div>
 

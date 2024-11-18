@@ -4,3 +4,8 @@ export const createOrganization = async (data) => {
     const response = await api.post('/backend/client/onboarding', data);
     return response.data;
 };
+
+export const getOrganization = async (data) => {
+    const response = await api.post('/backend/fetch/clients',data);
+    return response.data;
+};

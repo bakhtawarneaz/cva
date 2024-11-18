@@ -7,7 +7,7 @@
 
 .card_header {
     border-bottom: 1px solid #dbdade;
-    padding: 30px 15px;
+    padding: 20px 15px;
     display: flex;
 }
 
@@ -48,4 +48,169 @@
 .card_header .right .btn_cover svg {
     margin-right: 5px;
     color: #fff;
+}
+
+.card_body {
+    overflow-x: auto;
+}
+
+.card_body::-webkit-scrollbar {
+  height: 3px;
+}
+
+.card_body::-webkit-scrollbar-thumb {
+  background: #202f5f;
+}
+
+.card_body::-webkit-scrollbar-track {
+  background: #d1d2d4;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50px;
+}
+
+table thead {
+    background: #202f5f;
+}
+
+table thead th {
+    font-family: var(--family);
+    font-weight: var(--weight-regular);
+    font-size: var(--size14);
+    text-transform: capitalize;
+    color: #fff;
+    border-bottom: 1px solid #dbdade;
+    padding: 10px 10px;
+    text-align: left;
+    min-width: 100px;
+}
+
+table tbody td {
+    font-family: var(--family);
+    font-weight: var(--weight-regular);
+    font-size: var(--size14);
+    text-transform: capitalize;
+    color: #000;
+    border-bottom: 1px solid #dbdade;
+    padding: 5px 10px;
+    text-align: left;
+}
+
+table tbody td svg {
+    font-family: var(--family);
+    font-weight: var(--weight-regular);
+    font-size: var(--size20);
+    color: #000;
+}
+
+.card_footer {
+    display: flex;
+    align-items: center;
+    padding: 20px 15px;
+}
+
+.card_footer .left {
+    width: 20%;
+}
+
+.card_footer .right {
+    width: 80%;
+}
+
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.card_footer .left p {
+    font-family: var(--family);
+    font-weight: var(--weight-regular);
+    font-size: var(--size14);
+    text-transform: capitalize;
+    color: #000;
+}
+
+.pagination .paginate_nums {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.pagination .paginate_btn {
+    width: 35px;
+    height: 35px;
+    border-radius: 5px;
+    border: 0;
+    cursor: pointer;
+    background: #202f5f;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pagination .paginate_btn svg {
+    color: #fff;
+}
+
+.pagination .paginate_btn[disabled] {
+    background: #405189;
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.pagination .paginate_nums li {
+    list-style: none;
+}
+
+.pagination .paginate_nums li button {
+    width: 35px;
+    height: 35px;
+    border-radius: 5px;
+    border: 0;
+    font-family: var(--family);
+    font-weight: var(--weight-regular);
+    font-size: var(--size14);
+    cursor: pointer;
+    background: transparent;
+    border: 1px solid #202f5f;
+    transition: 0.5s all;
+    color: #000;
+}
+
+.pagination .paginate_nums li button.active {
+    background: #202f5f;
+    color: #fff;
+}
+
+table tbody .table_blank {
+    height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+
+table tbody .table_blank svg {
+    font-size: 60px;
+    margin-bottom: 10px;
+    color: #202f5f;
+}
+
+table tbody .table_blank p {
+    font-family: var(--family);
+    font-weight: var(--weight-regular);
+    font-size: var(--size18);
+    text-transform: capitalize;
+    color: #000;
 }
