@@ -19,12 +19,11 @@ const Login = () => {
     const navigate = useNavigate();
 
     const mutation = useMutation({
-      mutationFn: login,
+      mutationFn: (payload) => login(payload),
       onSuccess: () => {
           setLoading(false);
-          toast.success('Login Successfully...!');
           navigate('/dashboard/home');
-      },
+      }
     });
 
     const handleSubmit = (e) => {
@@ -37,7 +36,11 @@ const Login = () => {
           setLoading(false);
           return;
       }
-      mutation.mutate({ username: trimmedUsername, password: trimmedPassword });
+      const PAY_LOAD = { 
+        username: trimmedUsername, 
+        password: trimmedPassword
+      };
+      mutation.mutate(PAY_LOAD);
     };
 
     const togglePasswordVisibility = () => {

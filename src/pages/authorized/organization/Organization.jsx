@@ -1,26 +1,43 @@
 import React, { useRef, useState } from 'react'
+
+/* icons...*/
+
 import { IoChevronForwardOutline } from "react-icons/io5";
 import { FiPlus } from "react-icons/fi";
-import '@styles/_organization.css';
-import '@styles/_table.css';
-import Modal from '@components/Modal';
-import { useForm } from 'react-hook-form';
-import { fetchCountry } from '@api/countryApi';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { createOrganization } from '@api/organizationApi';
-import { uploadFile } from '@api/uploadApi';
-import toast from 'react-hot-toast';
 import { FaRegTrashAlt } from "react-icons/fa";
-import { useSelector } from 'react-redux';
-import ButtonLoader from '@components/ButtonLoader';
 import { LuRefreshCw } from "react-icons/lu";
 import { CiExport } from "react-icons/ci";
-import { getOrganization } from '@api/organizationApi';
-import TableComponent from '@components/TableComponent';
-import PaginationComponent from '@components/PaginationComponent';
 import { FiEdit } from "react-icons/fi";
 import { TfiWorld } from "react-icons/tfi";
+
+/* components...*/
+
+import Modal from '@components/Modal';
+import ButtonLoader from '@components/ButtonLoader';
+import TableComponent from '@components/TableComponent';
+import PaginationComponent from '@components/PaginationComponent';
+import Switch from '@components/Switch';
+
+/* api...*/
+
+import { fetchCountry } from '@api/countryApi';
+import { uploadFile } from '@api/uploadApi';
+import { createOrganization, getOrganization, deleteOrganization, editOrganization } from '@api/organizationApi';
+
+/* packages...*/
+
+import toast from 'react-hot-toast';
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+
+/* styles...*/
+
+import '@styles/_organization.css';
+import '@styles/_table.css';
+
+
 
 const Organization = () => {
 
@@ -36,15 +53,15 @@ const Organization = () => {
   const [progress, setProgress] = useState(0);
   const fileInputRef = useRef(null); 
   const [currentPage, setCurrentPage] = useState(1);
+  const [editingOrganization, setEditingOrganization] = useState(null);
 
   /* Variables Here...*/
-  const page = 1;
   const perPage = 10;
-
   const PARAMS = {
     page: currentPage,
     per_page: perPage,
   };
+  const queryClient = useQueryClient();
 
   
   /* Hooks...*/
@@ -56,14 +73,36 @@ const Organization = () => {
   const { data: countryData } = useQuery({
       queryKey: ['country'],
       queryFn: () => fetchCountry(),
-      staleTime: 10000,
+      staleTime: 60 * 60 * 1000,
   });
 
   const mutation = useMutation({
     mutationFn: (payload) => createOrganization(payload),
     onSuccess: () => {
       toast.success('Organization Create Successfully...!');
+      queryClient.invalidateQueries({ queryKey: ['organization']});
+      reset();
+      handleResetUpload();
+      closeModal();
     },
+  });
+
+  const mutationSwich = useMutation({
+    mutationFn: (payload) => deleteOrganization(payload),
+    onSuccess: () => {
+      toast.success('Organization Status Updated...!');
+      queryClient.invalidateQueries({ queryKey: ['organization']});
+    },
+  });
+
+  const editMutation = useMutation({
+    mutationFn: (payload) => editOrganization(payload),
+    onSuccess: () => {
+      toast.success('Organization updated successfully!');
+      queryClient.invalidateQueries({ queryKey: ['organization'], exact: false }); 
+      setEditingOrganization(null); 
+      closeModal();
+    }
   });
 
   const organization = organizationData?.data?.clients?.data || [];
@@ -71,17 +110,44 @@ const Organization = () => {
 
 
   /* Functions Here...*/
+
+  const handleEdit = async (id) => {
+    const selectedOrganization = organization.find((org) => org.id === id);
+      if (selectedOrganization) {
+        setEditingOrganization(selectedOrganization);
+        setValue('name', selectedOrganization.company);
+        setValue('number', selectedOrganization.number);
+        setValue('email', selectedOrganization.email);
+        setValue('website', selectedOrganization.website);
+        setValue('country', selectedOrganization.country);
+        setValue('address', selectedOrganization.address);
+        setValue('primary_color', selectedOrganization.primary_color);
+        setValue('logo', selectedOrganization.logo);
+        setUploadedImage(selectedOrganization.logo);
+        setIsModalOpen(true);
+    } else {
+      toast.error('Failed to find organization data.');
+    }
+  };
+
   const onSubmit = (data) => {
     const countryID = countryData?.data?.countries?.find(country => country.name === data.country);
     const PAY_LOAD = {
       ...data,
       country_id: parseInt(countryID.id),
-      created_by: parseInt(userId),
+      created_by: parseInt(userId)
     };
-    mutation.mutate(PAY_LOAD);
-    reset();
-    handleResetUpload();
-    //closeModal();
+    if (editingOrganization) {
+      const UPDATED_PAY_LOAD = {
+        ...PAY_LOAD,
+        id: editingOrganization.id,
+        host: "localhost",
+        enabled:editingOrganization.enabled
+      };
+      editMutation.mutate(UPDATED_PAY_LOAD);
+    } else {
+      mutation.mutate(PAY_LOAD);
+    }
   };
 
   const handleFileChange = async (e) => {
@@ -135,13 +201,25 @@ const Organization = () => {
 
   const closeModal = () => {
     setIsModalOpen(false);
+    setEditingOrganization(null);
     clearErrors();
     handleResetUpload();
     reset();
   };
 
-  /* Table code Here...*/
+  const handleToggle = (id, status) => {
+    const PAY_LOAD = { 
+      id, 
+      enabled: status 
+    };
+    mutationSwich.mutate(PAY_LOAD);
+  };
 
+  const handleReload = () => {
+    queryClient.invalidateQueries({ queryKey: ['organization']});
+  };
+
+  /* Table code Here...*/
   const handlePageChange = (page) => {
     if (page > 0 && page <= (meta?.totalPages)) {
       setCurrentPage(page);
@@ -158,14 +236,28 @@ const Organization = () => {
     { key: "company", label: "Name" },
     { key: "number", label: "Phone" },
     { key: "email", label: "Email" },
-    { key: "website", label: "Website", render: (row) => <Link to={row.website}><TfiWorld /></Link>, },
+    { 
+      key: "website", 
+      label: "Website", 
+      render: (row) => <Link to={row.website}><TfiWorld /></Link>, 
+    },
     { key: "address", label: "Address" },
     { key: "country", label: "Country" },
     { key: "onboarding_date", label: "Onboarding" },
-    { key: "enabled", label: "Status" },
+    { 
+      key: "enabled", 
+      label: "Status", 
+      render: (row) => (
+        <Switch
+          className={row.enabled ? 'active' : ''}
+          isChecked={row.enabled}
+          onToggle={() => handleToggle(row.id, !row.enabled)}
+        />
+      ), 
+    },
   ];
 
-
+  
 
   return (
     <>
@@ -188,14 +280,14 @@ const Organization = () => {
 
           </div>
           <div className='right'> 
-            <div className='btn_reload'>
+            <div className='btn_reload' onClick={handleReload}>
                <LuRefreshCw />
                <button>reload</button>
             </div>
-            <div className='btn_export'>
+            {/* <div className='btn_export'>
                 <CiExport />
                 <button>export</button>
-            </div>
+            </div> */}
             <div className='btn_cover' onClick={() => setIsModalOpen(true)}>
               <FiPlus />
               <button>add organization</button>
@@ -204,16 +296,17 @@ const Organization = () => {
         </div>
         <div className='card_body'>
             <TableComponent
-            columns={columns}
-            data={organization}
-            isLoading={isLoading}
-            renderActions={(row) => (
-              <span>
-                <FiEdit />
-              </span>
-            )}
-            actionLabel="Action"
-          />
+              columns={columns}
+              data={organization}
+              isLoading={isLoading}
+              skeletonRowCount={perPage}
+              renderActions={(row) => (
+                <span>
+                  <FiEdit onClick={() => handleEdit(row.id)} />
+                </span>
+              )}
+              actionLabel="Action"
+            />
         </div>
         <div className='card_footer'>
           <div className='left'>
@@ -234,7 +327,7 @@ const Organization = () => {
     {/* Modal */}
     <Modal isOpen={isModalOpen} onClose={closeModal}>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <h3>organization</h3>
+        <h3>{editingOrganization ? 'update organization' : 'organization'}</h3>
         <div className='form_group form_group_upload'>
           <div className='custom_upload' onClick={openFileDialog}>
               {!isUploading && !uploadedImage && (
@@ -319,11 +412,11 @@ const Organization = () => {
         </div>
         <div className='modal_btn_cover'>
           <button type="submit" className='cancel' onClick={closeModal}>cancel</button>
-          <button type="submit" className='btn' disabled={mutation.isPending}>
-            {mutation.isPending ? (
-                  <ButtonLoader />
-                ) : (
-                  "create"
+          <button type="submit" className='btn' disabled={mutation.isPending || editMutation.isPending}>
+            {(mutation.isPending || editMutation.isPending) ? (
+              <ButtonLoader />
+            ) : (
+              editingOrganization ? 'Update' : 'Create'
             )}
           </button>
         </div>

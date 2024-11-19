@@ -1,7 +1,26 @@
 import React from "react";
 import TableBlank from "./TableBlank";
+import Loading from "./Loading";
 
-const TableComponent = ({ columns, data, isLoading, renderActions, actionLabel = "Action" }) => {
+const TableComponent = ({ columns, data, isLoading, renderActions, actionLabel = "Action", skeletonRowCount = 10 }) => {
+
+  const renderSkeletonRows = () => {
+    return Array.from({ length: skeletonRowCount }).map((_, rowIndex) => (
+      <tr key={`skeleton-${rowIndex}`}>
+        {columns.map((_, colIndex) => (
+          <td key={`skeleton-cell-${rowIndex}-${colIndex}`}>
+            <Loading height={65} />
+          </td>
+        ))}
+        {renderActions && (
+          <td>
+            <Loading height={65} />
+          </td>
+        )}
+      </tr>
+    ));
+  };
+
   return (
       <table>
         <thead>
@@ -14,11 +33,12 @@ const TableComponent = ({ columns, data, isLoading, renderActions, actionLabel =
         </thead>
         <tbody>
           {isLoading ? (
-            <tr>
-              <td colSpan={columns.length + (renderActions ? 1 : 0)} className="load_noData">
-                Loading...
-              </td>
-            </tr>
+            // <tr>
+            //   <td colSpan={columns.length + (renderActions ? 1 : 0)} className="load_noData">
+            //     Loading...
+            //   </td>
+            // </tr>
+            renderSkeletonRows()
           ) : data.length > 0 ? (
             data.map((row) => (
               <tr key={row.id}>

@@ -4,7 +4,6 @@ import toast from 'react-hot-toast';
 import { store } from '../redux/store';
 
 export const login = async (credentials) => {
-
     try {
         const response = await api.post('/auth/login', credentials);
         const { data } = response;
@@ -12,8 +11,9 @@ export const login = async (credentials) => {
           store.dispatch(setIsAuthenticated(true));
           store.dispatch(setToken(data.data.token));
           store.dispatch(loginAction(data.data.user));
+          toast.success('Login Successfully...!');
       } else {
-          console.error('Invalid response data', data);
+          toast.error('Invalid response data')
       }
         return response;
       } catch (error) {

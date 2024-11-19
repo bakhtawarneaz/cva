@@ -196,7 +196,7 @@ const Home = () => {
                         "search"
                   )}
                 </button>
-                <button onClick={handleClear}>clear</button>
+                <button onClick={handleClear} disabled={isSearchDisabled}>clear</button>
               </div>
             </form>
          </div>

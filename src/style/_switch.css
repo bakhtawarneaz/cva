@@ -1,0 +1,28 @@
+.btn-toggle {
+    padding: 12px 25px;
+    position: relative;
+    border: none;
+    background: #bdc1c8;
+    border-radius: 25px;
+    cursor: pointer;
+}
+
+.btn-toggle > .handle{
+    background: #fff;
+    position: absolute;
+    border-radius: 25px;
+    transition: left 0.25s;
+    width: 18px;
+    height: 18px;
+    top: 3px;
+    left: 3px;
+} 
+
+.btn-toggle.active {
+    background-color: #202f5f;
+}
+
+.btn-toggle.active > .handle {
+    left: 29px;
+    transition: left 0.25s;
+}
