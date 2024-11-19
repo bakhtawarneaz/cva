@@ -360,6 +360,11 @@
     cursor: pointer;
 }
 
+.profile_cover .icon button img {
+    width: 100%;
+    border-radius: 50px;
+}
+
 .profile_cover .icon button svg {
     color: #202f5f;
     font-size: var(--size22);

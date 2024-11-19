@@ -3,11 +3,11 @@ import {  Navigate, Outlet } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { TfiLayoutGrid2 } from "react-icons/tfi";
 import { MdOutlineLightMode } from "react-icons/md";
-import { FaRegUser } from "react-icons/fa";
 import { IoIosLogOut } from 'react-icons/io';
 import { MenuItems } from '@view/MenuItems';
 import MenuList from '@components/MenuList';
 import AuthFormLogo from  '@assets/cva-logo.png';
+import UserProfilePic from  '@assets/11.png';
 import hand from '@assets/hand.gif';
 import { RxDashboard } from "react-icons/rx";
 import '@styles/_dashboard.css';
@@ -18,6 +18,7 @@ const DashboardLayout = () => {
 
   /* Redux Here...*/
   const token  = useSelector((state) => state.auth.token);
+  const user = useSelector((state) => state.auth.user);
   const dispatch = useDispatch();
 
   /* UseState Here...*/
@@ -83,7 +84,7 @@ const DashboardLayout = () => {
                   </div>
                 )}
                 <div className='profile_cover_content'>
-                  <h4>welcome - <span>super admin</span> <img src={hand} alt="hand-gif" /></h4>
+                  <h4>welcome - <span>{user?.role_name || 'User'}</span>{' '} <img src={hand} alt="hand-gif" /></h4>
                   <p>Here’s what’s happening today...!</p>
                 </div>
             </div>
@@ -96,7 +97,16 @@ const DashboardLayout = () => {
                         <button><TfiLayoutGrid2 /></button>
                     </div>
                     <div className="icon img_icon">
-                        <button onMouseDown={toggleVisibility}><FaRegUser /></button>
+                        <button onMouseDown={toggleVisibility}>
+                          <img 
+                          src={user?.profile_image || UserProfilePic } 
+                          alt="profile"
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = UserProfilePic;
+                          }} 
+                        />
+                        </button>
                         <div ref={profileRef} className={`profile ${isVisible ? 'visible' : ''}`}>
                           <ul>
                             <li onClick={handleLogout}><IoIosLogOut /><span>Log Out</span></li>
