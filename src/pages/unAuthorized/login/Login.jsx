@@ -1,30 +1,39 @@
 import React, { useState } from 'react'
-import { useMutation } from '@tanstack/react-query'
+
+/* packages...*/
 import toast from 'react-hot-toast'
 import { Link, useNavigate } from 'react-router-dom'
-import { login } from  '@api/authApi';
+
+/* icons...*/
 import { FaEye } from "react-icons/fa6";
 import { FaEyeSlash } from "react-icons/fa6";
+
+/* assets...*/
 import AuthFormLogo from  '@assets/cva-logo.png';
+
+/* components...*/
 import ButtonLoader from '@components/ButtonLoader';
+
+/* styles...*/
 import '@styles/_auth.css';
+
+/* hooks...*/
+import { useLogin } from '@hooks/useMutation';
+
 
 const Login = () => {
 
+    /* UseState Here...*/
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading,setLoading] =useState(false);
 
+    /* Hooks...*/
     const navigate = useNavigate();
 
-    const mutation = useMutation({
-      mutationFn: (payload) => login(payload),
-      onSuccess: () => {
-          setLoading(false);
-          navigate('/dashboard/home');
-      }
-    });
+     /* tanstack...*/
+    const mutation = useLogin(navigate, setLoading);
 
     const handleSubmit = (e) => {
       e.preventDefault();

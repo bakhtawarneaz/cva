@@ -20,6 +20,7 @@ export default defineConfig({
       '@icon': path.resolve(__dirname, 'src/icons'),
       '@helper': path.resolve(__dirname, 'src/helpers'),
       '@slice': path.resolve(__dirname, 'src/redux/slices'),
+      '@hooks': path.resolve(__dirname, 'src/hooks'),
     },
   },
   define: {
