@@ -33,11 +33,6 @@ const TableComponent = ({ columns, data, isLoading, renderActions, actionLabel =
         </thead>
         <tbody>
           {isLoading ? (
-            // <tr>
-            //   <td colSpan={columns.length + (renderActions ? 1 : 0)} className="load_noData">
-            //     Loading...
-            //   </td>
-            // </tr>
             renderSkeletonRows()
           ) : data.length > 0 ? (
             data.map((row) => (

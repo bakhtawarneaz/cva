@@ -10,7 +10,7 @@ body::-webkit-scrollbar {
   width: 5px;
 }
 body::-webkit-scrollbar-thumb {
-  background: #202f5f;
+  background: var(--primary-color);
 }
 body::-webkit-scrollbar-track {
   background: #d1d2d4;
@@ -18,16 +18,6 @@ body::-webkit-scrollbar-track {
 
 :root {
   --family:  "Poppins", system-ui;
-  --weight-regular: 400;
-  --weight-medium: 500;
-  --weight-bold: 700;
-  --size30: 30px;
-  --size25: 25px;
-  --size22: 22px;
-  --size20: 20px;
-  --size16: 16px;
-  --size14: 14px;
-  --size12: 12px;
   --primary-color:#202f5f;
 }
 

@@ -4,6 +4,7 @@ import { FaAngleDown, FaAngleUp } from 'react-icons/fa';
 
 const MenuList = ({ item, isSidebarCollapsed }) => {
 
+   /* Hooks Here...*/
   const location = useLocation();
   const submenuRef = useRef(null);
 
@@ -34,7 +35,6 @@ const MenuList = ({ item, isSidebarCollapsed }) => {
           to={item.path || '#'} 
           onClick={!isSidebarCollapsed && item.children ? toggleSubmenu : null}
           className={isActive ? 'active' : ''}
-          //title={isSidebarCollapsed ? item.title : ''}
           >
           {item.icon} <span>{item.title}</span>
           {item.children && (

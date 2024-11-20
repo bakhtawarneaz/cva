@@ -41,7 +41,7 @@ const BackToTopButton = () => {
                     fontSize: '20px',
                     cursor: 'pointer',
                     borderRadius: '50px',
-                    background: 'linear-gradient(to right, rgb(1, 98, 232) 0, rgba(1, 98, 232, 0.5) 100%)',
+                    background: 'var(--primary-color)',
                     color: '#fff',
                     border: 'none',
                     width: '45px',

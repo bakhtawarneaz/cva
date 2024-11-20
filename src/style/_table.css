@@ -23,11 +23,65 @@
     gap: 15px;
 }
 
+.card_header .right .btn_reload {
+    border: 1px solid #dbdade;
+    box-shadow: 0px 2px 4px rgba(165, 163, 174, 0.4);
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+}
+
+.card_header .right .btn_reload svg {
+    margin-right: 10px;
+    font-size: 20px;
+    color: #000;
+}
+
+.card_header .right .btn_reload button {
+    font-family: var(--family);
+    font-weight: 400;
+    font-size: 14px;
+    text-transform: capitalize;
+    background: transparent;
+    border: 0;
+    color: #000;
+    cursor: pointer;
+}
+
+.card_header .right .btn_export {
+    border: 1px solid #dbdade;
+    box-shadow: 0px 2px 4px rgba(165, 163, 174, 0.4);
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+}
+
+.card_header .right .btn_export svg {
+    margin-right: 10px;
+    font-size: 20px;
+    color: #000;
+}
+
+.card_header .right .btn_export button {
+    font-family: var(--family);
+    font-weight: 400;
+    font-size: 14px;
+    text-transform: capitalize;
+    background: transparent;
+    border: 0;
+    color: #000;
+    cursor: pointer;
+}
+
 .card_header .right .btn_cover {
     display: inline-flex;
     align-items: center;
     justify-content: flex-end;
-    background-color: #202f5f;
+    background-color: var(--primary-color);
     box-shadow: 0px 2px 4px rgba(165, 163, 174, 0.4);
     padding: 10px 20px;
     border-radius: 5px;
@@ -36,8 +90,8 @@
 
 .card_header .right .btn_cover button {
     font-family: var(--family);
-    font-weight: var(--weight-regular);
-    font-size: var(--size14);
+    font-weight: 400;
+    font-size: 14px;
     text-transform: capitalize;
     background: transparent;
     border: 0;
@@ -59,7 +113,7 @@
 }
 
 .card_body::-webkit-scrollbar-thumb {
-  background: #202f5f;
+  background: var(--primary-color);
 }
 
 .card_body::-webkit-scrollbar-track {
@@ -78,13 +132,13 @@ table img {
 }
 
 table thead {
-    background: #202f5f;
+    background: var(--primary-color);
 }
 
 table thead th {
     font-family: var(--family);
-    font-weight: var(--weight-regular);
-    font-size: var(--size14);
+    font-weight: 400;
+    font-size: 14px;
     text-transform: capitalize;
     color: #fff;
     border-bottom: 1px solid #dbdade;
@@ -95,8 +149,8 @@ table thead th {
 
 table tbody td {
     font-family: var(--family);
-    font-weight: var(--weight-regular);
-    font-size: var(--size14);
+    font-weight: 400;
+    font-size: 14px;
     text-transform: capitalize;
     color: #000;
     border-bottom: 1px solid #dbdade;
@@ -106,8 +160,8 @@ table tbody td {
 
 table tbody td svg {
     font-family: var(--family);
-    font-weight: var(--weight-regular);
-    font-size: var(--size20);
+    font-weight: 400;
+    font-size: 20px;
     color: #000;
     cursor: pointer;
 }
@@ -135,8 +189,8 @@ table tbody td svg {
 
 .card_footer .left p {
     font-family: var(--family);
-    font-weight: var(--weight-regular);
-    font-size: var(--size14);
+    font-weight: 400;
+    font-size: 14px;
     text-transform: capitalize;
     color: #000;
 }
@@ -153,7 +207,7 @@ table tbody td svg {
     border-radius: 5px;
     border: 0;
     cursor: pointer;
-    background: #202f5f;
+    background: var(--primary-color);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -179,17 +233,17 @@ table tbody td svg {
     border-radius: 5px;
     border: 0;
     font-family: var(--family);
-    font-weight: var(--weight-regular);
-    font-size: var(--size14);
+    font-weight: 400;
+    font-size: 14px;
     cursor: pointer;
     background: transparent;
-    border: 1px solid #202f5f;
+    border: 1px solid var(--primary-color);
     transition: 0.5s all;
     color: #000;
 }
 
 .pagination .paginate_nums li button.active {
-    background: #202f5f;
+    background: var(--primary-color);
     color: #fff;
 }
 
@@ -205,13 +259,13 @@ table tbody .table_blank {
 table tbody .table_blank svg {
     font-size: 60px;
     margin-bottom: 10px;
-    color: #202f5f;
+    color: var(--primary-color);
 }
 
 table tbody .table_blank p {
     font-family: var(--family);
-    font-weight: var(--weight-regular);
-    font-size: var(--size18);
+    font-weight: 400;
+    font-size: 18px;
     text-transform: capitalize;
     color: #000;
 }

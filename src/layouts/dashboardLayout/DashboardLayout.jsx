@@ -1,18 +1,32 @@
 import React, { useRef, useState } from 'react'
-import {  Navigate, Outlet } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+
+/* slices...*/
+import { logout } from '@slice/authSlice';
+
+/* icons...*/
+import { RxDashboard } from "react-icons/rx";
 import { TfiLayoutGrid2 } from "react-icons/tfi";
 import { MdOutlineLightMode } from "react-icons/md";
 import { IoIosLogOut } from 'react-icons/io';
-import { MenuItems } from '@view/MenuItems';
-import MenuList from '@components/MenuList';
+
+/* packages...*/
+import {  Navigate, Outlet } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+
+/* styles...*/
+import '@styles/_dashboard.css';
+
+/* assets...*/
 import AuthFormLogo from  '@assets/cva-logo.png';
 import UserProfilePic from  '@assets/11.png';
 import hand from '@assets/hand.gif';
-import { RxDashboard } from "react-icons/rx";
-import '@styles/_dashboard.css';
+
+/* view...*/
+import { MenuItems } from '@view/MenuItems';
+
+/* components...*/
 import BackToTopButton from '@components/BackToTopButton';
-import { logout } from '@slice/authSlice';
+import MenuList from '@components/MenuList';
 
 const DashboardLayout = () => {
 
@@ -48,7 +62,6 @@ const DashboardLayout = () => {
   }
 
   const handleLogout = () => dispatch(logout());
-
   const toggleSidebar = () => setIsSidebarCollapsed((prev) => !prev);;
 
   return (

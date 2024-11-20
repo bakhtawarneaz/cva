@@ -1,4 +1,6 @@
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
+
+/* icons...*/
 import { FaHandsClapping } from "react-icons/fa6";
 import { PiDoorOpenDuotone } from "react-icons/pi";
 import { IoCallSharp } from "react-icons/io5";
@@ -6,28 +8,40 @@ import { SlGraph } from "react-icons/sl";
 import { BsCurrencyDollar } from "react-icons/bs";
 import { RiRepeatFill } from "react-icons/ri";
 import { MdOutlineFilterAlt } from "react-icons/md";
+
+/* packages...*/
 import DatePicker from "react-multi-date-picker";
-import transition from "react-element-popper/animations/transition"
+import { useMutation, useQuery } from '@tanstack/react-query';
+
+/* styles...*/
 import '@styles/_home.css';
+
+/* assets...*/
 import im1 from '@assets/1.png'
 import im2 from '@assets/2.png'
 import im3 from '@assets/3.png'
 import im4 from '@assets/4.png'
 import im5 from '@assets/5.png'
 import im6 from '@assets/6.png'
-import KnocksChart from '@view/KnocksChart';
-import TargetAchieve from '@view/TargetAchieve';
-import Usership from '@view/Usership';
-import Pitches from '@view/Pitches';
-import Buyers from '@view/Buyers';
-import DoorAnswered from '@view/DoorAnswered';
-import Deals from '@view/Deals';
-import { useMutation, useQuery } from '@tanstack/react-query';
+
+/* view...*/
+import Knocks from '@view/Knocks';
+import Target from '@view/Target';
+import UsershipChart from '@view/UsershipChart';
+import PitchesChart from '@view/PitchesChart';
+import BuyersChart from '@view/BuyersChart';
+import DoorAnsweredChart from '@view/DoorAnsweredChart';
+import DealPieChart from '@view/DealPieChart';
+
+/* api...*/
 import { getDashboardData } from '@api/dashboardApi';
-import DashboardTopLoader from '@components/DashboardTopLoader';
 import { fetchCities } from '@api/cityApi';
 import { fetchCampaigns } from '@api/campaignApi';
+
+/* components...*/
 import ButtonLoader from '@components/ButtonLoader';
+import DashboardTopLoader from '@components/DashboardTopLoader';
+
 
 const Home = () => {
 
@@ -49,9 +63,11 @@ const Home = () => {
     knockData: [],
     pitchData: { total_pitches: 0, total_bought: 0 },
   };
+
+   /* Hooks...*/
+  const datePickerRef = useRef(null);
   
   /* UseState Here...*/
-  //const [value, setValue] = useState([]);
   const [data, setData] = useState(initialData);
   const [campaigns, setCampaigns] = useState([]); 
   const [selectedCity, setSelectedCity] = useState(null);
@@ -60,7 +76,6 @@ const Home = () => {
 
 
   /* Functions Here...*/
-
   const { data: citiesData } = useQuery({
       queryKey: ['cities'],
       queryFn: () => fetchCities(),
@@ -114,6 +129,13 @@ const Home = () => {
     setDateRange([]);
     setData(initialData);
     setCampaigns([]);
+  };
+
+  const handleDateChange = (value) => {
+    setDateRange(value);
+    if (value.length === 2) {
+      datePickerRef.current.closeCalendar();
+    }
   };
   
   
@@ -174,19 +196,17 @@ const Home = () => {
                 </select>
               </div>
               <div className='form_group custom_date_picker'>
-                <DatePicker 
-                  value={dateRange} 
-                  onChange={setDateRange} 
-                  range 
-                  dateSeparator=" - "
-                  numberOfMonths={2}
-                  animations={[
-                    transition({ duration: 800, from: 35 })
-                  ]} 
-                  placeholder="Start Date - End Date"
-                  showOtherDays
-                  monthYearSeparator="-"
-                />
+                  <DatePicker
+                    value={dateRange}
+                    onChange={handleDateChange}
+                    ref={datePickerRef}
+                    range
+                    numberOfMonths={2}
+                    dateSeparator=" - "
+                    placeholder="Select Date Range"
+                    showOtherDays
+                    monthYearSeparator="-"
+                  />
               </div>
               <div className='btn_group'>
                 <button onClick={handleSearch} disabled={isSearchDisabled}>
@@ -264,68 +284,79 @@ const Home = () => {
           </div>
       </div>
        <div className='chart_wrap'>
-           {/* <div className='chart_box knocks'> 
-              <h2>knocks</h2>
-              <p className='txt'>Daywise Statistical Overview</p>
-              <KnocksChart data={data?.knockData} isLoading={mutation.isPending} />
-           </div>   
-           <div className='chart_box target_achieve'> 
-              <h2>Target Achieve</h2>
-              <p className='txt'>Number of Deals, sold till now</p>
-              <div className='target_chart_wrap'>
-                  <div className='left'>
-                    <TargetAchieve 
-                      dealsSold={yesterdayDeals} 
-                      totalDeals={yesterdayTotalDeals} 
-                      percentage={yesterdayPercentage} 
-                      title="Yesterday Target Achieve" 
-                      isLoading={mutation.isPending}
-                    />
-                  </div>
-                  <div className='right'>
-                    <TargetAchieve 
-                        dealsSold={monthDeals} 
-                        totalDeals={monthTotalDeals} 
-                        percentage={monthPercentage} 
-                        title="Monthly Target Achieve" 
-                        isLoading={mutation.isPending}
-                      />
-                  </div>
-              </div>
-           </div>  
-           <div className='chart_box usership'> 
-              <h2>usership</h2>
-              <p className='txt'>Statistical overview of customers, who have bought and didn't bought the deals</p>
-              <Usership data={data?.userShipData} isLoading={mutation.isPending} />
+           
+           <div className='box1'>
+            <div className='chart_box knocks'> 
+                <h2>knocks</h2>
+                <p className='txt'>Daywise Statistical Overview</p>
+                <Knocks data={data?.knockData} isLoading={mutation.isPending} />
+            </div>   
+            <div className='chart_box target_achieve'> 
+                <h2>Target Achieve</h2>
+                <p className='txt'>Number of Deals, sold till now</p>
+                <div className='target_chart_wrap'>
+                      <div className='target_cover'>
+                        <Target 
+                          dealsSold={yesterdayDeals} 
+                          totalDeals={yesterdayTotalDeals} 
+                          percentage={yesterdayPercentage} 
+                          title="Yesterday Target Achieve" 
+                          isLoading={mutation.isPending}
+                        />
+                      </div>
+                      <div className='target_cover'>
+                          <Target
+                            dealsSold={monthDeals} 
+                            totalDeals={monthTotalDeals} 
+                            percentage={monthPercentage} 
+                            title="Monthly Target Achieve" 
+                            isLoading={mutation.isPending}
+                          />
+                      </div>
+                </div>
+            </div>  
            </div>
-           <div className='chart_box pitches'> 
-              <h2>pitches</h2>
-              <p className='txt'>Ratio of pitches listened and buy</p>
-              <Pitches 
-                totalPitches={totalPitches} 
-                totalBought={totalBought} 
-                isLoading={mutation.isPending} 
-              />
-           </div>  
+
+           <div className='box2'>
+            <div className='chart_box usership'> 
+                <h2>usership</h2>
+                <p className='txt'>Statistical overview of customers, who have bought and didn't bought the deals</p>
+                <UsershipChart data={data?.userShipData} isLoading={mutation.isPending} />
+            </div>
+            <div className='chart_box pitches'> 
+                <h2>pitches</h2>
+                <p className='txt'>Ratio of pitches listened and buy</p>
+                <PitchesChart 
+                  totalPitches={totalPitches} 
+                  totalBought={totalBought} 
+                  isLoading={mutation.isPending} 
+                />
+            </div> 
+           </div>
+
            <div className='chart_box buyers_chart'> 
               <h2>buyers chart</h2>
               <p className='txt'>Number of deals purchased by unique customers</p>
-              <Buyers buyerData={buyerData} isLoading={mutation.isPending} />
-           </div>  
-           <div className='chart_box door_answered'> 
-              <h2>door answered</h2>
-              <p className='txt'>Ratio of Non Associated and Associated Userships</p>
-              <DoorAnswered 
-                  doorsAnswered={doorsAnswered} 
-                  doorsNotAnswered={doorsNotAnswered} 
-                  isLoading={mutation.isPending} 
-              />
-           </div>   
-           <div className='chart_box deals'> 
-              <h2>deals</h2>
-              <p className='txt'>Number of Deals, sold till now</p>
-              <Deals dealData={dealData} isLoading={mutation.isPending} />
-           </div>  */}
+              <BuyersChart buyerData={buyerData} isLoading={mutation.isPending} />
+           </div> 
+
+           <div className='box3'> 
+            <div className='chart_box door_answered'> 
+                <h2>door answered</h2>
+                <p className='txt'>Ratio of Non Associated and Associated Userships</p>
+                <DoorAnsweredChart 
+                    doorsAnswered={doorsAnswered} 
+                    doorsNotAnswered={doorsNotAnswered} 
+                    isLoading={mutation.isPending} 
+                />
+            </div>   
+            <div className='chart_box deals'> 
+                <h2>deals</h2>
+                <p className='txt'>Number of Deals, sold overall</p>
+                <DealPieChart dealData={dealData} isLoading={mutation.isPending} />
+            </div> 
+           </div>
+
        </div>           
     </div>
   )

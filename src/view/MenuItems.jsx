@@ -1,9 +1,12 @@
+/* icons...*/
 import { FaHome } from 'react-icons/fa';
 import { FaBuilding } from "react-icons/fa";
 import { TbBrandCodepen } from "react-icons/tb";
 import { FaUsers } from "react-icons/fa";
 import { MdCampaign } from "react-icons/md";
 import { AiOutlinePartition } from "react-icons/ai";
+
+/* helpers...*/
 import { getDynamicPath } from '@helper/PathHelper';
 
 export const MenuItems = [

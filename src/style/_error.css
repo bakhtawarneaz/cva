@@ -8,14 +8,14 @@
 .not_found h1 {
     font-size: 45px;
     font-family: var(--family);
-    font-weight: var(--weight-bold);
+    font-weight: 700;
     color: #000;
 }
 
 .not_found p {
-    font-size: var(--size20);
+    font-size: 20px;
     font-family: var(--family);
-    font-weight: var(--weight-regular);
+    font-weight: 400;
     color: #000000;
     margin: 0 0 30px;
     text-transform: capitalize;
@@ -27,9 +27,9 @@
     background: linear-gradient(135deg, #00A76F, #007867);
     border-radius: 5px;
     color: #fff;
-    font-size: var(--size20);
+    font-size: 20px;
     font-family: var(--family);
-    font-weight: var(--weight-regular);
+    font-weight: 400;
     text-transform: capitalize;
     text-decoration: none;
     display: inline-block;

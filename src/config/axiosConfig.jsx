@@ -4,7 +4,7 @@ import { logout } from '../redux/slices/authSlice';
 import toast from 'react-hot-toast';
 
 const BASE_URL = 'http://localhost:3055/v1';
-
+//const BASE_URL = 'https://cva-be.its.com.pk/v1';
 
 const api = axios.create({
   baseURL: BASE_URL,
@@ -41,9 +41,7 @@ api.interceptors.request.use(
 api.interceptors.response.use(
 	(response) => response,
 	async (error) => {
-	  // Check if the error response status is 401
 	  if (error.response && error.response.status === 401) {
-		// Dispatch the logout action to clear user data from Redux
 		toast.error("Un Authenticated!");
 		store.dispatch(logout());
 	  }

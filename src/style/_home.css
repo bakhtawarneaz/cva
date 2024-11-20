@@ -60,20 +60,20 @@
 
 .top_bar .box .icon svg {
     color: #fff;
-    font-size: var(--size25);
+    font-size: 25px;
 }
 
 .top_bar .box .disc h3 {
     font-family: var(--family);
-    font-weight: var(--weight-regular);
-    font-size: var(--size20);
+    font-weight: 400;
+    font-size: 20px;
     color: #111827;
 }
 
 .top_bar .box .disc span {
     font-family: var(--family);
-    font-weight: var(--weight-medium);
-    font-size: var(--size12);
+    font-weight: 500;
+    font-size: 12px;
     color: #4B5563;
 }
 
@@ -95,9 +95,9 @@
     border-radius: 5px;
     padding: 8px 15px;
     color: #fff;
-    font-size: var(--size16);
+    font-size: 16px;
     font-family: var(--family);
-    font-weight: var(--weight-regular);
+    font-weight: 400;
     text-transform: capitalize;
     display: flex;
     align-items: center;
@@ -123,9 +123,9 @@
     width: 100%;
     outline: none;
     border: 1px solid #405189;
-    font-size: var(--size16);
+    font-size: 16px;
     font-family: var(--family);
-    font-weight: var(--weight-regular);
+    font-weight: 400;
     text-transform: capitalize;
     border-radius: 5px;
 }
@@ -138,9 +138,9 @@
     padding: 8px 35px 8px 15px;
     outline: none;
     border: 1px solid #405189;
-    font-size: var(--size16);
+    font-size:16px;
     font-family: var(--family);
-    font-weight: var(--weight-regular);
+    font-weight: 400;
     text-transform: capitalize;
     border-radius: 5px;
     height: auto;
@@ -166,9 +166,9 @@
     background: #405189;
     border-radius: 5px;
     color: #fff;
-    font-size: var(--size16);
+    font-size: 16px;
     font-family: var(--family);
-    font-weight: var(--weight-regular);
+    font-weight: 400;
     text-transform: capitalize;
     cursor: pointer;
     transition: 0.5s all;
@@ -183,7 +183,7 @@
  
 .dashboard_filter .custom_date_picker .rmdp-header {
     font-family: var(--family);
-    font-weight: var(--weight-regular);
+    font-weight: 400;
 }
 
 .dashboard_filter .custom_date_picker .rmdp-header button i {
@@ -193,27 +193,26 @@
 
 .dashboard_filter .custom_date_picker .rmdp-day-picker {
     font-family: var(--family);
-    font-weight: var(--weight-regular);
+    font-weight: 400;
 }
 
 .dashboard_filter .custom_date_picker .rmdp-day-picker .rmdp-week-day {
     color: #405189;
 }
 .dashboard_filter .custom_date_picker .rmdp-day-picker .rmdp-week .rmdp-today span {
-    background-color: #405189;
+    background-color: #45b369;
+}
+
+.dashboard_filter .custom_date_picker .rmdp-day-picker .rmdp-week .rmdp-range {
+    background-color: #45b369;
+    border-radius: 50px;
+}
+
+.dashboard_filter .custom_date_picker .rmdp-day-picker .rmdp-week .rmdp-day span:hover {
+    background: #45b369;
 }
 
 /********** Chart ************/
-
-.chart_wrap {
-    /* display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 15px;
-    margin-top: 25px; */
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
-}
 
 .chart_box {
     background: #fff;
@@ -221,14 +220,13 @@
     border: 1px solid #eae8f1;
     box-shadow: -8px 12px 18px 0 #dadee8;
     border-radius: 5px;
-    width: 49%;
     margin-top: 25px;
 }
 
 .chart_box h2 {
     font-family: var(--family);
-    font-weight: var(--weight-medium);
-    font-size: var(--size14);
+    font-weight: 500;
+    font-size: 14px;
     text-transform: capitalize;
     background: #487fff;
     color: #fff;
@@ -239,71 +237,70 @@
 
 .chart_box .txt {
     font-family: var(--family);
-    font-weight: var(--weight-medium);
-    font-size: var(--size12);
+    font-weight: 500;
+    font-size: 12px;
     color: #4B5563;
+}
+
+.chart_wrap .box1 {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.chart_wrap .box1 .knocks {
+    width: 59%;
+    margin-right:10px
+}
+
+.chart_wrap .box1 .target_achieve {
+    width: 40%;
+}
+
+.chart_wrap .box2 {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.chart_wrap .box2 .usership {
+    width: 49%;
+    margin-right:10px
+}
+
+.chart_wrap .box2 .pitches {
+    width: 50%;
+}
+
+.chart_wrap .box3 {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.chart_wrap .box3 .door_answered {
+    width: 49%;
+    margin-right:10px
+}
+
+.chart_wrap .box3 .deals {
+    width: 50%;
 }
 
 .target_chart_wrap {
-    display: flex;
-    align-items: center;
-    margin-top: 30px;
+    margin-top: 20px;
 }
 
-.target_chart_wrap .left {
-    width: 50%;
+.target_cover {
+    margin-bottom: 15px;
 }
 
-.target_chart_wrap .right {
-    width: 50%;
-}
-
-.target_chart_wrap .content {
-    margin: 20px 0 0 20px;
-}
-
-.target_chart_wrap .content p {
+.target_chart_wrap .target_cover p {
     font-family: var(--family);
-    font-weight: var(--weight-medium);
-    font-size: var(--size14);
+    font-weight: 500;
+    font-size: 14px;
     color: #4B5563;
     margin-bottom: 5px;
-}
-
-.target_chart_wrap .content span {
-    font-family: var(--family);
-    font-weight: var(--weight-medium);
-    font-size: var(--size12);
-    color: #4B5563;
-    text-transform: capitalize;
-    display: block;
-    position: relative;
-    padding-left: 15px;
-    margin-bottom: 5px;
-}
-
-.target_chart_wrap .content .s1:before {
-    content: "";
-    position: absolute;
-    top: 5px;
-    left: 0;
-    width: 8px;
-    height: 8px;
-    background: #fddf00;
-}
-
-.target_chart_wrap .content .s2:before {
-    content: "";
-    position: absolute;
-    top: 5px;
-    left: 0;
-    width: 8px;
-    height: 8px;
-    background: #248dfd;
-}
-
-.chart_wrap.buyers_chart {
-    grid-template-columns: 1fr;
 }
 
 .knocks h2 {

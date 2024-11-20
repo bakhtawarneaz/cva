@@ -19,7 +19,7 @@
 } 
 
 .btn-toggle.active {
-    background-color: #202f5f;
+    background-color: var(--primary-color);
 }
 
 .btn-toggle.active > .handle {
