@@ -246,7 +246,7 @@ const Organization = () => {
               <span>search:</span>
               <input
                 type="text"
-                placeholder="search organization here..."
+                placeholder="search organization name..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
