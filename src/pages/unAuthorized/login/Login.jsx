@@ -36,8 +36,7 @@ const Login = () => {
     const mutation = useLogin(navigate, setLoading);
 
     /* Functions Here...*/
-    const handleSubmit = (e) => {
-      e.preventDefault();
+    const handleSubmit = () => {
       setLoading(true);
       const trimmedUsername = username.trim();
       const trimmedPassword = password.trim();
