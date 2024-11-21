@@ -1,11 +1,10 @@
-import React, { useRef, useState } from 'react'
+import React, { useMemo, useRef, useState } from 'react'
 
 /* icons...*/
 import { IoChevronForwardOutline } from "react-icons/io5";
 import { FiPlus } from "react-icons/fi";
 import { FaRegTrashAlt } from "react-icons/fa";
 import { LuRefreshCw } from "react-icons/lu";
-import { CiExport } from "react-icons/ci";
 import { FiEdit } from "react-icons/fi";
 import { TfiWorld } from "react-icons/tfi";
 
@@ -17,22 +16,22 @@ import PaginationComponent from '@components/PaginationComponent';
 import Switch from '@components/Switch';
 
 /* api...*/
-import { fetchCountry } from '@api/countryApi';
 import { uploadFile } from '@api/uploadApi';
-import { createOrganization, getOrganization, deleteOrganization, editOrganization } from '@api/organizationApi';
 
 /* packages...*/
 import toast from 'react-hot-toast';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 
 /* styles...*/
 import '@styles/_breadCrumb.css';
 import '@styles/_table.css';
 
-
+/* hooks... */
+import { useCreateOrganization, useEditOrganization, useDeleteOrganization } from '@hooks/useMutation';
+import { useFetchOrganizations, useFetchCountries } from '@hooks/useQuery';
 
 const Organization = () => {
 
@@ -46,87 +45,36 @@ const Organization = () => {
   const [isUploading, setIsUploading] = useState(false); 
   const [uploadedImage, setUploadedImage] = useState(''); 
   const [progress, setProgress] = useState(0);
-  const fileInputRef = useRef(null); 
   const [currentPage, setCurrentPage] = useState(1);
   const [editingOrganization, setEditingOrganization] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   /* Variables Here...*/
-  const perPage = 10;
   const PARAMS = {
     page: currentPage,
-    per_page: perPage,
+    per_page: 10,
   };
   const queryClient = useQueryClient();
-
   
   /* Hooks...*/
-  const { data: organizationData, isLoading } = useQuery({
-    queryKey: ['organization', currentPage],
-    queryFn: () => getOrganization(PARAMS),
-  });
+  const fileInputRef = useRef(null); 
 
-  const { data: countryData } = useQuery({
-      queryKey: ['country'],
-      queryFn: () => fetchCountry(),
-      staleTime: 60 * 60 * 1000,
-  });
+  /* Queries */
+  const { data: organizationData, isLoading: isOrganizationsLoading } = useFetchOrganizations(PARAMS);
+  const { data: countryData } = useFetchCountries();
 
-  const mutation = useMutation({
-    mutationFn: (payload) => createOrganization(payload),
-    onSuccess: () => {
-      toast.success('Organization Create Successfully...!');
-      queryClient.invalidateQueries({ queryKey: ['organization']});
-      reset();
-      handleResetUpload();
-      closeModal();
-    },
-  });
-
-  const mutationSwich = useMutation({
-    mutationFn: (payload) => deleteOrganization(payload),
-    onSuccess: () => {
-      toast.success('Organization Status Updated...!');
-      queryClient.invalidateQueries({ queryKey: ['organization']});
-    },
-  });
-
-  const editMutation = useMutation({
-    mutationFn: (payload) => editOrganization(payload),
-    onSuccess: () => {
-      toast.success('Organization updated successfully!');
-      queryClient.invalidateQueries({ queryKey: ['organization'], exact: false }); 
-      setEditingOrganization(null); 
-      closeModal();
-    }
-  });
+  /* Mutations */
+  const createMutation = useCreateOrganization(reset, closeModal, handleResetUpload);
+  const editMutation = useEditOrganization(closeModal);
+  const deleteMutation = useDeleteOrganization();
 
   const organization = organizationData?.data?.clients?.data || [];
   const meta = organizationData?.data?.clients?.meta || {};
 
 
   /* Functions Here...*/
-
-  const handleEdit = async (id) => {
-    const selectedOrganization = organization.find((org) => org.id === id);
-      if (selectedOrganization) {
-        setEditingOrganization(selectedOrganization);
-        setValue('name', selectedOrganization.company);
-        setValue('number', selectedOrganization.number);
-        setValue('email', selectedOrganization.email);
-        setValue('website', selectedOrganization.website);
-        setValue('country', selectedOrganization.country);
-        setValue('address', selectedOrganization.address);
-        setValue('primary_color', selectedOrganization.primary_color);
-        setValue('logo', selectedOrganization.logo);
-        setUploadedImage(selectedOrganization.logo);
-        setIsModalOpen(true);
-    } else {
-      toast.error('Failed to find organization data.');
-    }
-  };
-
   const onSubmit = (data) => {
-    const countryID = countryData?.data?.countries?.find(country => country.name === data.country);
+    const countryID = countryData?.data?.countries?.find((country) => country.name === data.country);
     const PAY_LOAD = {
       ...data,
       country_id: parseInt(countryID.id),
@@ -141,8 +89,45 @@ const Organization = () => {
       };
       editMutation.mutate(UPDATED_PAY_LOAD);
     } else {
-      mutation.mutate(PAY_LOAD);
+      createMutation.mutate(PAY_LOAD);
     }
+  };
+
+  const handleEdit = (id) => {
+    const selected = organization.find((org) => org.id === id);
+    if (selected) {
+      setEditingOrganization(selected);
+      setValue('name', selected.company);
+      Object.keys(selected).forEach((key) => setValue(key, selected[key]));
+      setUploadedImage(selected.logo);
+      setIsModalOpen(true);
+    } else {
+      toast.error('Failed to find organization data.');
+    }
+  };
+  
+  function closeModal() {
+    setIsModalOpen(false);
+    setEditingOrganization(null);
+    handleResetUpload();
+    clearErrors();
+    reset();
+  };
+
+  const handleToggle = (id, status) => {
+    const PAY_LOAD = { 
+      id, 
+      enabled: status 
+    };
+    deleteMutation.mutate(PAY_LOAD);
+  };
+
+  function handleResetUpload() {
+    setUploadedImage('');  
+    setProgress(0);        
+    setIsUploading(false); 
+    if (fileInputRef.current) fileInputRef.current.value = '';
+    setValue('logo', '');
   };
 
   const handleFileChange = async (e) => {
@@ -151,6 +136,7 @@ const Organization = () => {
     const file = e.target.files[0];
     const formData = new FormData();
     formData.append('image', file);
+
     const simulateProgress = () => {
       setProgress((prev) => {
         if (prev >= 100) {
@@ -160,7 +146,9 @@ const Organization = () => {
         return prev + 10; 
       });
     };
+
     const progressInterval = setInterval(simulateProgress, 100);
+
     try {
       const response = await uploadFile(formData); 
       clearInterval(progressInterval);
@@ -184,35 +172,11 @@ const Organization = () => {
     }
   };
 
-  const handleResetUpload = () => {
-    setUploadedImage('');  
-    setProgress(0);        
-    setIsUploading(false); 
-    if (fileInputRef.current) {
-      fileInputRef.current.value = ''; 
-    }
-    setValue('logo', '');
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setEditingOrganization(null);
-    clearErrors();
-    handleResetUpload();
-    reset();
-  };
-
-  const handleToggle = (id, status) => {
-    const PAY_LOAD = { 
-      id, 
-      enabled: status 
-    };
-    mutationSwich.mutate(PAY_LOAD);
-  };
-
   const handleReload = () => {
     queryClient.invalidateQueries({ queryKey: ['organization']});
   };
+
+
 
   /* Table code Here...*/
   const handlePageChange = (page) => {
@@ -252,6 +216,13 @@ const Organization = () => {
     },
   ];
 
+   /* Filter...*/
+  const filteredData = useMemo(() => {
+    if (!searchTerm) return organization;
+    return organization.filter((item) =>
+      item.company.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [searchTerm, organization]);
   
 
   return (
@@ -272,17 +243,18 @@ const Organization = () => {
       <div className='card'>
         <div className='card_header'>
           <div className='left'> 
-
+              <input
+                type="text"
+                placeholder="search organization here..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
           </div>
           <div className='right'> 
             <div className='btn_reload' onClick={handleReload}>
                <LuRefreshCw />
                <button>reload</button>
             </div>
-            {/* <div className='btn_export'>
-                <CiExport />
-                <button>export</button>
-            </div> */}
             <div className='btn_cover' onClick={() => setIsModalOpen(true)}>
               <FiPlus />
               <button>add organization</button>
@@ -292,9 +264,9 @@ const Organization = () => {
         <div className='card_body'>
             <TableComponent
               columns={columns}
-              data={organization}
-              isLoading={isLoading}
-              skeletonRowCount={perPage}
+              data={filteredData}
+              isLoading={isOrganizationsLoading}
+              skeletonRowCount={10}
               renderActions={(row) => (
                 <span>
                   <FiEdit onClick={() => handleEdit(row.id)} />
@@ -407,8 +379,8 @@ const Organization = () => {
         </div>
         <div className='modal_btn_cover'>
           <button type="submit" className='cancel' onClick={closeModal}>cancel</button>
-          <button type="submit" className='btn' disabled={mutation.isPending || editMutation.isPending}>
-            {(mutation.isPending || editMutation.isPending) ? (
+          <button type="submit" className='btn' disabled={createMutation.isPending || editMutation.isPending}>
+            {(createMutation.isPending || editMutation.isPending) ? (
               <ButtonLoader />
             ) : (
               editingOrganization ? 'Update' : 'Create'

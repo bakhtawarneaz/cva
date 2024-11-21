@@ -24,7 +24,7 @@
 .not_found a {
     padding: 8px 25px;
     border: 0;
-    background: linear-gradient(135deg, #00A76F, #007867);
+    background: var(--primary-color);
     border-radius: 5px;
     color: #fff;
     font-size: 20px;

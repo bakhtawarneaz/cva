@@ -32,11 +32,12 @@ const Login = () => {
     /* Hooks...*/
     const navigate = useNavigate();
 
-    /* tanstack...*/
+    /* Mutations...*/
     const mutation = useLogin(navigate, setLoading);
 
     /* Functions Here...*/
-    const handleSubmit = () => {
+    const handleSubmit = (e) => {
+      e.preventDefault();
       setLoading(true);
       const trimmedUsername = username.trim();
       const trimmedPassword = password.trim();

@@ -79,7 +79,7 @@ const Home = () => {
   const { data: citiesData } = useQuery({
       queryKey: ['cities'],
       queryFn: () => fetchCities(),
-      staleTime: 10000,
+      staleTime: 60 * 60 * 1000,
   });
 
   const campaignMutation = useMutation({
