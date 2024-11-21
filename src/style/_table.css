@@ -50,8 +50,17 @@
     cursor: pointer;
 }
 
+.card_header .left span{
+    font-family: var(--family);
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--primary-color);
+    text-transform: capitalize;
+    margin-right: 10px;
+}
+
 .card_header .left input {
-    width: 60%;
+    width: 50%;
     outline: none;
     border: 1px solid var(--primary-color);
     padding: 8px 15px;

@@ -223,7 +223,7 @@ const Organization = () => {
       item.company.toLowerCase().includes(searchTerm.toLowerCase())
     );
   }, [searchTerm, organization]);
-  
+
 
   return (
     <>
@@ -243,6 +243,7 @@ const Organization = () => {
       <div className='card'>
         <div className='card_header'>
           <div className='left'> 
+              <span>search:</span>
               <input
                 type="text"
                 placeholder="search organization here..."
