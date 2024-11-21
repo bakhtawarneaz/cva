@@ -22,8 +22,9 @@ import { uploadFile } from '@api/uploadApi';
 import toast from 'react-hot-toast';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { useQueryClient } from '@tanstack/react-query';
+import { MuiColorInput, matchIsValidColor } from 'mui-color-input'
 
 /* styles...*/
 import '@styles/_breadCrumb.css';
@@ -35,7 +36,13 @@ import { useFetchOrganizations, useFetchCountries } from '@hooks/useQuery';
 
 const Organization = () => {
 
-  const { register, handleSubmit, formState: { errors }, setValue, clearErrors, reset } = useForm();
+  const { register, handleSubmit, formState: { errors }, setValue, clearErrors, reset, control } = useForm(
+     {
+        defaultValues: {
+          primary_color: "#202f5f"
+      }
+    }
+  );
 
   /* Redus State Here...*/
   const userId = useSelector((state) => state.auth.user.id);
@@ -175,8 +182,6 @@ const Organization = () => {
   const handleReload = () => {
     queryClient.invalidateQueries({ queryKey: ['organization']});
   };
-
-
 
   /* Table code Here...*/
   const handlePageChange = (page) => {
@@ -375,8 +380,18 @@ const Organization = () => {
 
         <div className='form_group form_group_color'>
           <label>Color</label>
-          <input type="color" {...register('primary_color', { required: true })} />
-          {errors.primary_color && <p className='error'>color is required</p>}
+            <Controller
+              name="primary_color"
+              control={control}
+              rules={{ validate: matchIsValidColor }}
+              render={({ field }) => (
+                <MuiColorInput
+                  {...field}
+                  format="hex"
+                />
+              )}
+            />
+           {errors.primary_color && <p className='error'>color is required</p>} 
         </div>
         <div className='modal_btn_cover'>
           <button type="submit" className='cancel' onClick={closeModal}>cancel</button>

@@ -125,6 +125,10 @@
   resize: none;
 }
 
+.modal_body form .form_group_color .MuiOutlinedInput-root.Mui-focused fieldset {
+  border: 1px solid #dbdade;
+}
+
 .modal_btn_cover {
   display: flex;
   align-items: center;
