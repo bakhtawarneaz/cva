@@ -28,6 +28,9 @@ import { MenuItems } from '@view/MenuItems';
 import BackToTopButton from '@components/BackToTopButton';
 import MenuList from '@components/MenuList';
 
+/* helper...*/
+import { getMenuByRole } from '@helper/RoleHelper';
+
 const DashboardLayout = () => {
 
   /* Redux Here...*/
@@ -35,6 +38,8 @@ const DashboardLayout = () => {
   const user = useSelector((state) => state.auth.user);
   const dispatch = useDispatch();
 
+  
+  
   /* UseState Here...*/
   const [isVisible, setIsVisible] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -42,6 +47,8 @@ const DashboardLayout = () => {
   /* Variables Here...*/
   const currentYear = new Date().getFullYear();
   const profileRef = useRef(null);
+  const allowedMenus = getMenuByRole(user?.role_id);
+  
 
   /* Functions Here...*/
   const toggleVisibility = (event) => {
@@ -82,8 +89,9 @@ const DashboardLayout = () => {
               )}
           </div>
           <ul className='sidebar_menu'>
-            {MenuItems.map((item, index) => (
-                <MenuList item={item} key={index} isSidebarCollapsed={isSidebarCollapsed} />
+            {MenuItems.filter((item) => allowedMenus.includes(item.title))
+              .map((item, index) => (
+                  <MenuList item={item} key={index} isSidebarCollapsed={isSidebarCollapsed} />
             ))}
           </ul>
         </div>
