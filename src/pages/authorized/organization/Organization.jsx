@@ -28,6 +28,7 @@ import { Link } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
 import { useQueryClient } from '@tanstack/react-query';
 import { MuiColorInput, matchIsValidColor } from 'mui-color-input'
+import { parseISO, format } from 'date-fns';
 
 /* styles...*/
 import '@styles/_breadCrumb.css';
@@ -93,7 +94,7 @@ const Organization = () => {
     if (editingOrganization) {
       const UPDATED_PAY_LOAD = {
         ...PAY_LOAD,
-        id: editingOrganization.id,
+        //id: editingOrganization.id,
         host: "localhost",
         enabled:editingOrganization.enabled
       };
@@ -217,7 +218,16 @@ const Organization = () => {
     },
     { key: "address", label: "Address" },
     { key: "country", label: "Country" },
-    { key: "onboarding_date", label: "Onboarding" },
+    { 
+      key: "onboarding_date", 
+      label: "Onboarding" ,
+      render: (row) => {
+        if (!row.onboarding_date) {
+          return '';
+        }
+        return format(parseISO(row.onboarding_date), 'yyyy-MM-dd');
+      }
+    },
     { 
       key: "enabled", 
       label: "Status", 
