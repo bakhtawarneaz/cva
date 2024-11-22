@@ -8,6 +8,9 @@ import { LuRefreshCw } from "react-icons/lu";
 import { FiEdit } from "react-icons/fi";
 import { TfiWorld } from "react-icons/tfi";
 
+/* assets...*/
+import UserProfilePic from  '@assets/11.png';
+
 /* components...*/
 import Modal from '@components/Modal';
 import ButtonLoader from '@components/ButtonLoader';
@@ -59,7 +62,7 @@ const Organization = () => {
   /* Variables Here...*/
   const PARAMS = {
     page: currentPage,
-    per_page: 10,
+    per_page: 10
   };
   const queryClient = useQueryClient();
   
@@ -67,7 +70,7 @@ const Organization = () => {
   const fileInputRef = useRef(null); 
 
   /* Queries */
-  const { data: organizationData, isLoading: isOrganizationsLoading } = useFetchOrganizations(PARAMS);
+  const { data: organizationData, isLoading: isOrganizationsLoading } = useFetchOrganizations(PARAMS , 'grid');
   const { data: countryData } = useFetchCountries();
 
   /* Mutations */
@@ -195,7 +198,14 @@ const Organization = () => {
     {
       key: "logo",
       label: "Logo",
-      render: (row) => <img src={row.logo} alt={row.company} />,
+      render: (row) => <img 
+        src={row.logo || UserProfilePic } 
+        alt={row.company} 
+        onError={(e) => {
+          e.target.onerror = null;
+          e.target.src = UserProfilePic;
+        }} 
+      />,
     },
     { key: "company", label: "Name" },
     { key: "number", label: "Phone" },

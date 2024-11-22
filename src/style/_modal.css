@@ -79,6 +79,17 @@
   margin-bottom: 20px;
 }
 
+.brand_color_wrap {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.brand_color_wrap .MuiInputBase-input {
+  padding: 12px 15px;
+}
+
 .modal_body form .form_group label {
   color: #5d596c;
   font-family: var(--family);

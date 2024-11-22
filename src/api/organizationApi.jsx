@@ -15,11 +15,6 @@ export const deleteOrganization = async (organizationId) => {
     return response.data;
 };
 
-export const fetchOrganizationById = async (organizationId) => {
-    const response = await api.get(`/backend/fetch/organization/${organizationId}`);
-    return response.data;
-};
-
 export const editOrganization = async (data) => {
     const response = await api.post('/backend/client/update', data);
     return response.data;
