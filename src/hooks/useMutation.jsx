@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { login } from  '@api/authApi';
 import { createOrganization, deleteOrganization, editOrganization } from '@api/organizationApi';
 import { createBrand, deleteBrand, editBrand } from '@api/brandApi';
+import { createUser, deleteUser, editUser } from '@api/userApi';
 import toast from 'react-hot-toast';
 
 /** Login **/
@@ -90,6 +91,46 @@ export function useDeleteBrand() {
     onSuccess: () => {
       toast.success('Brand status updated!');
       queryClient.invalidateQueries({ queryKey: ['brand'] });
+    },
+  });
+}
+
+
+/** User **/
+
+export function useCreateUser(resetForm, closeModal, handleResetUpload) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: createUser,
+    onSuccess: () => {
+      toast.success('User created successfully!');
+      queryClient.invalidateQueries({ queryKey: ['user'] });
+      resetForm();
+      handleResetUpload();
+      closeModal();
+    },
+  });
+}
+
+export function useEditUser(closeModal) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: editUser,
+    onSuccess: () => {
+      toast.success('User updated successfully!');
+      queryClient.invalidateQueries({ queryKey: ['user'], exact: false });
+      closeModal();
+    },
+  });
+}
+
+export function useDeleteUser() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: deleteUser,
+    onSuccess: () => {
+      toast.success('User status updated!');
+      queryClient.invalidateQueries({ queryKey: ['user'] });
     },
   });
 }

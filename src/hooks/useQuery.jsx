@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { fetchCountry } from '@api/countryApi';
 import { getOrganization } from '@api/organizationApi';
 import { getBrand } from '@api/brandApi';
-import toast from 'react-hot-toast';
+import { getUser } from '@api/userApi';
 
 /** Countries **/
 export function useFetchCountries() {
@@ -35,6 +35,16 @@ export function useFetchBrand(params) {
     return useQuery({
         queryKey: ['brand', params.page],
         queryFn: () => getBrand(params),
+        staleTime: 60 * 60 * 1000,
+    });
+}
+
+
+/** User **/
+export function useFetchUser(params) {
+    return useQuery({
+        queryKey: ['user', params.page],
+        queryFn: () => getUser(params),
         staleTime: 60 * 60 * 1000,
     });
 }
