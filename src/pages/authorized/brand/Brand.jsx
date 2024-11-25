@@ -36,7 +36,7 @@ import '@styles/_table.css';
 
 /* hooks... */
 import { useCreateBrand, useEditBrand, useDeleteBrand } from '@hooks/useMutation';
-import { useFetchBrand, useFetchCountries, useFetchOrganizations } from '@hooks/useQuery';
+import { useFetchBrand, useFetchCountries, useFetchOrganizationsAll } from '@hooks/useQuery';
 
 const Brand = () => {
 
@@ -67,7 +67,7 @@ const Brand = () => {
       per_page: 10,
     };
 
-    const PARAMS2 = {
+    const ORGANIZATION_PARAMS = {
       page: null,
       perPage: null,
     };
@@ -80,7 +80,7 @@ const Brand = () => {
     /* Queries */
     const { data: brandData, isLoading: isBrandsLoading } = useFetchBrand(PARAMS);
     const { data: countryData } = useFetchCountries();
-    const { data: organizationData } = useFetchOrganizations(PARAMS2, 'selectBox');
+    const { data: organizationData } = useFetchOrganizationsAll(ORGANIZATION_PARAMS);
   
     /* Mutations */
     const createMutation = useCreateBrand(reset, closeModal, handleResetUpload);

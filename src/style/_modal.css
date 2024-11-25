@@ -20,6 +20,10 @@
     max-width: 800px;
     position: relative;
   }
+
+  .user_modal .modal_body {
+    max-width: 1150px;
+}
   
   .modal_close {
     position: absolute;
@@ -44,7 +48,7 @@
 
 .modal_body .inner_form {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   gap: 15px;
   margin-bottom: 20px;
 }
@@ -87,6 +91,50 @@
 }
 
 .brand_color_wrap .MuiInputBase-input {
+  padding: 12px 15px;
+}
+
+.user_color_wrap {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.user_role_wrap {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.modal_body form .gender_wrap {
+  display: flex;
+  padding-top: 10px;
+  gap: 25px;
+}
+
+.gender_wrap .radio_label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.gender_wrap .radio_label input[type="radio"] {
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
+}
+
+.gender_wrap .radio_label span {
+  color: #5d596c;
+  font-family: var(--family);
+  font-weight: 400;
+  font-size: 20px;
+  text-transform: capitalize;
+}
+
+.user_color_wrap .MuiInputBase-input {
   padding: 12px 15px;
 }
 

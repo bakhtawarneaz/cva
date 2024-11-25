@@ -2,7 +2,9 @@ import { useQuery } from '@tanstack/react-query';
 import { fetchCountry } from '@api/countryApi';
 import { getOrganization } from '@api/organizationApi';
 import { getBrand } from '@api/brandApi';
-import { getUser } from '@api/userApi';
+import { getUser, getRole } from '@api/userApi';
+import { fetchCities } from '@api/cityApi';
+import { fetchCampaigns } from '@api/campaignApi';
 
 /** Countries **/
 export function useFetchCountries() {
@@ -13,19 +15,27 @@ export function useFetchCountries() {
     });
 }
 
-/** Organization **/
-export function useFetchOrganizations(params, fetchFor = 'grid' ) {
+export function useFetchCity() {
     return useQuery({
-        queryKey: ['organization', fetchFor, params],
-        queryFn: () => {
-            if (fetchFor === 'grid') {
-                return getOrganization({ ...params, type: 'grid' });
-            }
-            if (fetchFor === 'selectBox') {
-                return getOrganization({ ...params, type: 'selectBox' });
-            }
-            throw new Error('Invalid fetchFor parameter');
-        },
+        queryKey: ['cities'],
+        queryFn: fetchCities,
+        staleTime: 60 * 60 * 1000,
+    });
+}
+
+/** Organization **/
+export function useFetchOrganizations(params) {
+    return useQuery({
+        queryKey: ['organization', params],
+        queryFn: () => getOrganization(params),
+        staleTime: 60 * 60 * 1000,
+    });
+}
+
+export function useFetchOrganizationsAll(params2) {
+    return useQuery({
+        queryKey: ['organization', params2],
+        queryFn: () => getOrganization(params2),
         staleTime: 60 * 60 * 1000,
     });
 }
@@ -33,18 +43,43 @@ export function useFetchOrganizations(params, fetchFor = 'grid' ) {
 /** Brand **/
 export function useFetchBrand(params) {
     return useQuery({
-        queryKey: ['brand', params.page],
+        queryKey: ['brand', params],
         queryFn: () => getBrand(params),
         staleTime: 60 * 60 * 1000,
     });
 }
 
+export function useFetchBrandAll(params2) {
+    return useQuery({
+        queryKey: ['brand', params2],
+        queryFn: () => getBrand(params2),
+        staleTime: 60 * 60 * 1000,
+    });
+}
 
 /** User **/
 export function useFetchUser(params) {
     return useQuery({
-        queryKey: ['user', params.page],
+        queryKey: ['user', params],
         queryFn: () => getUser(params),
+        staleTime: 60 * 60 * 1000,
+    });
+}
+
+/** Role **/
+export function useFetchRole(params) {
+    return useQuery({
+        queryKey: ['role', params],
+        queryFn: () => getRole(params),
+        staleTime: 60 * 60 * 1000,
+    });
+}
+
+/** Campaign **/
+export function useFetchCampaign(params) {
+    return useQuery({
+        queryKey: ['campaign', params],
+        queryFn: () => fetchCampaigns(params),
         staleTime: 60 * 60 * 1000,
     });
 }

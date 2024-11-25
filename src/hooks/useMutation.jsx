@@ -109,6 +109,9 @@ export function useCreateUser(resetForm, closeModal, handleResetUpload) {
       handleResetUpload();
       closeModal();
     },
+    onError: (err) => {
+      toast.error(err?.response?.data?.message);
+    }
   });
 }
 

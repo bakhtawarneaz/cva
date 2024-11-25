@@ -36,7 +36,7 @@ import '@styles/_table.css';
 
 /* hooks... */
 import { useCreateUser, useEditUser, useDeleteUser } from '@hooks/useMutation';
-import { useFetchUser, useFetchBrand, useFetchCountries, useFetchOrganizations } from '@hooks/useQuery';
+import { useFetchRole, useFetchOrganizationsAll, useFetchBrandAll, useFetchCity, useFetchCampaign, useFetchUser } from '@hooks/useQuery';
 
 const User = () => {
 
@@ -64,10 +64,33 @@ const User = () => {
      /* Variables Here...*/
      const PARAMS = {
       page: currentPage,
-      per_page: 10,
+      perPage: 10,
     };
 
-    const PARAMS2 = {
+    const ORGANIZATION_PARAMS = {
+      page: null,
+      perPage: null,
+    };
+
+    const BRAND_PARAMS = {
+      page: null,
+      perPage: null,
+    };
+
+    const ROLE_PARAM = {
+      "limit": 10,
+      "page": 0,
+      "columns": "*",
+      "sortby": "ASC",
+      "orderby": "id",
+      "where": "displayed = $1",
+      "values": true
+    }
+
+    const CAMPAIGN_PARAMS = {
+      campaign_id: null,
+      brand_id: null,
+      city_id: null,
       page: null,
       perPage: null,
     };
@@ -79,9 +102,12 @@ const User = () => {
 
     /* Queries */
     const { data: userData, isLoading: isUserLoading } = useFetchUser(PARAMS);
-    const { data: countryData } = useFetchCountries();
-    const { data: organizationData } = useFetchOrganizations(PARAMS2, 'selectBox');
-  
+    const { data: roleData } = useFetchRole(ROLE_PARAM);
+    const { data: organizationData } = useFetchOrganizationsAll(ORGANIZATION_PARAMS);
+    const { data: brandData } = useFetchBrandAll(BRAND_PARAMS);
+    const { data: citiesData } = useFetchCity();
+    const { data: campaignsData } = useFetchCampaign(CAMPAIGN_PARAMS);
+
     /* Mutations */
     const createMutation = useCreateUser(reset, closeModal, handleResetUpload);
     const editMutation = useEditUser(closeModal);
@@ -94,12 +120,14 @@ const User = () => {
      const onSubmit = (data) => {
       const PAY_LOAD = {
         ...data,
-        created_by: parseInt(userId),
+        clientId: (data.clientId === undefined || data.clientId === "") ? 0 : data.clientId,
+        brand_id: data.brand_id === "" ? null : data.brand_id,
+        campaign_id: data.campaign_id === "" ? null : data.campaign_id,
+        city_id: data.city_id === "" ? null : data.city_id,
       };
       if (editingUser) {
         const UPDATED_PAY_LOAD = {
-          ...PAY_LOAD,
-          updated_by: parseInt(userId)
+          ...PAY_LOAD
         };
         editMutation.mutate(UPDATED_PAY_LOAD);
       } else {
@@ -111,16 +139,16 @@ const User = () => {
       const selected = user.find((org) => org.id === id);
       if (selected) {
         setEditingUser(selected);
-        if (selected.on_boarding_date) {
-          const formattedDate = format(parseISO(selected.on_boarding_date), 'yyyy-MM-dd');
-          setValue('on_boarding_date', formattedDate);
+        if (selected.dt) {
+          const formattedDate = format(parseISO(selected.dt), 'yyyy-MM-dd');
+          setValue('dt', formattedDate);
         }
         Object.keys(selected).forEach((key) => {
-          if (key !== 'on_boarding_date') {
+          if (key !== 'dt') {
             setValue(key, selected[key]);
           }
         });
-        setUploadedImage(selected.app_back_image);
+        setUploadedImage(selected.profile_image);
         setIsModalOpen(true);
       } else {
         toast.error('Failed to find user data.');
@@ -137,10 +165,9 @@ const User = () => {
   
     const handleToggle = (id, status) => {
       const PAY_LOAD = { 
-        id, 
-        is_active: status 
+        enabled: status 
       };
-      deleteMutation.mutate(PAY_LOAD);
+      deleteMutation.mutate({ id, status: PAY_LOAD });
     };
   
     function handleResetUpload() {
@@ -148,7 +175,7 @@ const User = () => {
       setProgress(0);        
       setIsUploading(false); 
       if (fileInputRef.current) fileInputRef.current.value = '';
-      setValue('app_back_image', '');
+      setValue('profile_image', '');
     };
   
      const handleFileChange = async (e) => {
@@ -175,9 +202,9 @@ const User = () => {
         clearInterval(progressInterval);
         setProgress(100);
         setUploadedImage(response.data.link); 
-        setValue('app_back_image', response.data.link);
+        setValue('profile_image', response.data.link);
         toast.success('File uploaded successfully!');
-        clearErrors('app_back_image');
+        clearErrors('profile_image');
       } catch (error) {
         clearInterval(progressInterval);
         setProgress(0);
@@ -206,10 +233,10 @@ const User = () => {
     const columns = [
       { key: "id", label: "ID" },
       {
-        key: "app_back_image",
+        key: "profile_image",
         label: "Logo",
         render: (row) => <img 
-          src={row.app_back_image || UserProfilePic } 
+          src={row.profile_image || UserProfilePic } 
           alt={row.name} 
           onError={(e) => {
             e.target.onerror = null;
@@ -217,28 +244,31 @@ const User = () => {
           }} 
         />,
       },
-      { key: "name", label: "Name" },
-      { key: "phone", label: "Phone" },
+      { key: "username", label: "Name" },
+      { key: "number", label: "Phone" },
       { key: "email", label: "Email" },
+      { key: "gender", label: "Gender"},
+      { key: "role_name", label: "Role" },
+      { key: "organization_name", label: "Organizations"},
+      { key: "city_name", label: "City"},
       { 
-        key: "website", 
-        label: "Website", 
-        render: (row) => <Link to={row.website}><TfiWorld /></Link>, 
+        key: "dt", 
+        label: "Created Date",
+        render: (row) => {
+          if (!row.dt) {
+            return '';
+          }
+          return format(parseISO(row.dt), 'yyyy-MM-dd');
+        }
       },
-      { key: "address", label: "Address" },
       { 
-        key: "on_boarding_date", 
-        label: "Onboarding",
-        render: (row) => format(parseISO(row.on_boarding_date), 'yyyy-MM-dd'), 
-      },
-      { 
-        key: "is_active", 
+        key: "enabled", 
         label: "Status", 
         render: (row) => (
           <Switch
-            className={row.is_active ? 'active' : ''}
-            isChecked={row.is_active}
-            onToggle={() => handleToggle(row.id, !row.is_active)}
+            className={row.enabled ? 'active' : ''}
+            isChecked={row.enabled}
+            onToggle={() => handleToggle(row.id, !row.enabled)}
           />
         ), 
       },
@@ -248,7 +278,7 @@ const User = () => {
     const filteredData = useMemo(() => {
       if (!searchTerm) return user;
       return user.filter((item) =>
-        item.name.toLowerCase().includes(searchTerm.toLowerCase())
+        item.username.toLowerCase().includes(searchTerm.toLowerCase())
       );
   }, [searchTerm, user]);
 
@@ -274,7 +304,7 @@ const User = () => {
                       <span>search:</span>
                       <input
                         type="text"
-                        placeholder="search brand name..."
+                        placeholder="search user name..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                       />
@@ -286,7 +316,7 @@ const User = () => {
                     </div>
                     <div className='btn_cover' onClick={() => setIsModalOpen(true)}>
                       <FiPlus />
-                      <button>add brand</button>
+                      <button>add user</button>
                     </div>
                   </div>
                 </div>
@@ -321,14 +351,14 @@ const User = () => {
       </div>
 
       {/* Modal */}
-        <Modal isOpen={isModalOpen} onClose={closeModal}>
+        <Modal isOpen={isModalOpen} onClose={closeModal} className={'user_modal'}>
           <form onSubmit={handleSubmit(onSubmit)}>
             <h3>{editingUser ? 'update user' : 'user'}</h3>
             <div className='form_group form_group_upload'>
               <div className='custom_upload' onClick={openFileDialog}>
                   {!isUploading && !uploadedImage && (
                     <div className='upload_cover'>
-                      <input type="file" {...register('app_back_image', { required: true })} onChange={handleFileChange} ref={fileInputRef} />
+                      <input type="file" {...register('profile_image', { required: true })} onChange={handleFileChange} ref={fileInputRef} />
                       <button type="button" className='upload_btn'>
                         <span className='icon'>+</span>
                         <span className='txt'>upload</span>
@@ -354,19 +384,25 @@ const User = () => {
                     </div>
                   )}
               </div>
-              {errors.app_back_image && <p className='error'>image is required</p>}
+              {errors.profile_image && <p className='error'>image is required</p>}
             </div>
             <div className='inner_form'>
               <div className='form_group'>
-                <label>Name</label>
-                <input type="text" {...register('name', { required: true })} className='form_control' />
-                {errors.name && <p className='error'>name is required</p>}
+                <label>First Name</label>
+                <input type="text" {...register('first_name', { required: true })} className='form_control' />
+                {errors.first_name && <p className='error'>first name is required</p>}
+              </div>
+
+              <div className='form_group'>
+                <label>Last Name</label>
+                <input type="text" {...register('last_name', { required: true })} className='form_control' />
+                {errors.last_name && <p className='error'>last name is required</p>}
               </div>
 
               <div className='form_group'>
                 <label>Phone</label>
-                <input type="text" {...register('phone', { required: true })} className='form_control' />
-                {errors.phone && <p className='error'>number is required</p>}
+                <input type="text" {...register('number', { required: true })} className='form_control' />
+                {errors.number && <p className='error'>phone is required</p>}
               </div>
 
               <div className='form_group'>
@@ -376,50 +412,113 @@ const User = () => {
               </div>
 
               <div className='form_group'>
-                <label>Website</label>
-                <input type="url" {...register('website', { required: true })} className='form_control' />
-                {errors.website && <p className='error'>website is required</p>}
+                <label>Date of Birth</label>
+                <input type="date" {...register('dob', { required: true })} className='form_control' />
+                {errors.dob && <p className='error'>dob is required</p>} 
               </div>
-            </div>
 
-            <div className='form_group form_group_address'>
-              <label>Address</label>
-              <textarea {...register('address', { required: true })} />
-              {errors.address && <p className='error'>address is required</p>}
-            </div>
+              <div className="form_group">
+                <label>Gender</label>
+                <div className="gender_wrap">
+                  <div className="radio_label">
+                    <input
+                      type="radio"
+                      value="male"
+                      id="male"
+                      {...register('gender', { required: true })}
+                    />
+                    <span htmlFor="male">Male</span>
+                  </div>
+                  <div className="radio_label">
+                    <input
+                      type="radio"
+                      value="female"
+                      id="female"
+                      {...register('gender', { required: true })}
+                    />
+                    <span htmlFor="female">Female</span>
+                  </div>
+                </div>
+                {errors.gender && <p className='error'>Gender is required</p>}
+              </div>
 
-            <div className='form_group form_group_country'>
-              <label>Country</label>
-              <select {...register('country_id', { required: true })}>
-                <option value="">select country</option>
-                {
-                  countryData?.data?.countries?.map(country => (
-                    <option key={country.id} value={country.id}>{country.name}</option>
-                  ))
-                }
-              </select>
-              {errors.country_id && <p className='error'>country is required</p>}
-            </div>
-
-            <div className='form_group form_group_country'>
-              <label>Organization</label>
-              <select {...register('organization_id', { required: true })}>
-                <option value="">select organization</option>
-                {
-                  organizationData?.data?.clients?.data.map(organization => (
-                    <option key={organization.id} value={organization.id}>{organization.company}</option>
-                  ))
-                }
-              </select>
-              {errors.organization_id && <p className='error'>organization is required</p>}
-            </div>
-
-            <div className='brand_color_wrap'>    
               <div className='form_group'>
-                <label>On-Boarding Date</label>
-                <input type="date" {...register('on_boarding_date', { required: true })} className='form_control' />
-                {errors.on_boarding_date && <p className='error'>date is required</p>} 
+                <label>Username</label>
+                <input type="text" {...register('username', { required: true })} className='form_control' />
+                {errors.username && <p className='error'>username is required</p>} 
               </div>
+
+              <div className='form_group'>
+                <label>Password</label>
+                <input type="password" {...register('password', { required: true })} className='form_control' />
+                {errors.password && <p className='error'>password is required</p>} 
+              </div>
+              
+              <div className='form_group'>
+                <label>Role</label>
+                <select {...register('role_id', { required: true })}>
+                  <option value="">select role</option>
+                  {
+                    roleData?.data?.list?.data?.map(role => (
+                      <option key={role.id} value={role.id}>{role.name}</option>
+                    ))
+                  }
+                </select>
+                {errors.role_id && <p className='error'>role is required</p>}
+              </div>
+
+              <div className='form_group'>
+                <label>Organization</label>
+                <select {...register('organization_id', { required: true })}>
+                  <option value="">select organization</option>
+                  {
+                    organizationData?.data?.clients?.data?.map(organization => (
+                      <option key={organization.id} value={organization.id}>{organization.company}</option>
+                    ))
+                  }
+                </select>
+                {errors.organization_id && <p className='error'>organization is required</p>}
+              </div>
+
+              <div className='form_group'>
+                <label>Brand</label>
+                <select {...register('brand_id', { required: true })}>
+                  <option value="">select brand</option>
+                  {
+                    brandData?.data?.brand?.data?.map(brand => (
+                      <option key={brand.id} value={brand.id}>{brand.name}</option>
+                    ))
+                  }
+                </select>
+                {errors.brand_id && <p className='error'>brand is required</p>}
+              </div>
+
+              <div className='form_group'>
+                <label>Campaign</label>
+                <select {...register('campaign_id', { required: true })}>
+                  <option value="">select campaign</option>
+                  {
+                    campaignsData?.data?.fetchCampaign?.campaigns?.map(campaign => (
+                      <option key={campaign.id} value={campaign.id}>{campaign.name}</option>
+                    ))
+                  }
+                </select>
+                {errors.campaign_id && <p className='error'>campaign is required</p>}
+              </div>
+
+              <div className='form_group'>
+                <label>City</label>
+                <select {...register('city_id', { required: true })}>
+                  <option value="">select city</option>
+                  {
+                    citiesData?.data?.fetchCity?.map(city => (
+                      <option key={city.id} value={city.id}>{city.name}</option>
+                    ))
+                  }
+                </select>
+                {errors.city_id && <p className='error'>city is required</p>}
+              </div>
+
               <div className='form_group'>
                 <label>Primary Color</label>
                   <Controller
@@ -450,6 +549,7 @@ const User = () => {
                   />
                 {errors.secondary_color && <p className='error'>secondary color is required</p>} 
               </div>
+
             </div>
 
             <div className='modal_btn_cover'>
