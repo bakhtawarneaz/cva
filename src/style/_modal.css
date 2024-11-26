@@ -48,9 +48,13 @@
 
 .modal_body .inner_form {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr;
   gap: 15px;
   margin-bottom: 20px;
+}
+
+.user_modal .modal_body .inner_form {
+  grid-template-columns: 1fr 1fr 1fr;
 }
 
 .modal_body form h3 {

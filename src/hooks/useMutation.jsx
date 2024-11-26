@@ -3,6 +3,7 @@ import { login } from  '@api/authApi';
 import { createOrganization, deleteOrganization, editOrganization } from '@api/organizationApi';
 import { createBrand, deleteBrand, editBrand } from '@api/brandApi';
 import { createUser, deleteUser, editUser } from '@api/userApi';
+import { createCampaign, deleteCampaign, editCampaign } from '@api/campaignApi';
 import toast from 'react-hot-toast';
 
 /** Login **/
@@ -134,6 +135,45 @@ export function useDeleteUser() {
     onSuccess: () => {
       toast.success('User status updated!');
       queryClient.invalidateQueries({ queryKey: ['user'] });
+    },
+  });
+}
+
+
+/** Campaign **/
+
+export function useCreateCampaign(resetForm, closeModal) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: createCampaign,
+    onSuccess: () => {
+      toast.success('Campaign created successfully!');
+      queryClient.invalidateQueries({ queryKey: ['campaign'] });
+      resetForm();
+      closeModal();
+    }
+  });
+}
+
+export function useEditCampaign(closeModal) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: editCampaign,
+    onSuccess: () => {
+      toast.success('Campaign updated successfully!');
+      queryClient.invalidateQueries({ queryKey: ['campaign'], exact: false });
+      closeModal();
+    },
+  });
+}
+
+export function useDeleteCampaign() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: deleteCampaign,
+    onSuccess: () => {
+      toast.success('Campaign status updated!');
+      queryClient.invalidateQueries({ queryKey: ['campaign'] });
     },
   });
 }

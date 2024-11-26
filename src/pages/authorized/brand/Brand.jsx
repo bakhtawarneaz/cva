@@ -320,7 +320,7 @@ const Brand = () => {
       </div>
 
       {/* Modal */}
-        <Modal isOpen={isModalOpen} onClose={closeModal}>
+        <Modal isOpen={isModalOpen} onClose={closeModal} className={'brand_modal'}>
           <form onSubmit={handleSubmit(onSubmit)}>
             <h3>{editingBrand ? 'update brand' : 'brand'}</h3>
             <div className='form_group form_group_upload'>

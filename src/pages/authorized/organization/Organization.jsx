@@ -318,7 +318,7 @@ const Organization = () => {
     </div>
 
     {/* Modal */}
-    <Modal isOpen={isModalOpen} onClose={closeModal}>
+    <Modal isOpen={isModalOpen} onClose={closeModal} className={'organization_modal'}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <h3>{editingOrganization ? 'update organization' : 'organization'}</h3>
         <div className='form_group form_group_upload'>

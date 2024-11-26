@@ -11,7 +11,6 @@ import { MdOutlineFilterAlt } from "react-icons/md";
 
 /* packages...*/
 import DatePicker from "react-multi-date-picker";
-import { useMutation, useQuery } from '@tanstack/react-query';
 
 /* styles...*/
 import '@styles/_home.css';
@@ -41,6 +40,9 @@ import { fetchCampaigns } from '@api/campaignApi';
 /* components...*/
 import ButtonLoader from '@components/ButtonLoader';
 import DashboardTopLoader from '@components/DashboardTopLoader';
+
+/* hooks... */
+import { useMutation, useQuery } from '@tanstack/react-query';
 
 
 const Home = () => {

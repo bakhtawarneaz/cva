@@ -1,0 +1,52 @@
+.campaign_wrap table tbody td {
+    padding: 15px 10px;
+}
+
+.campaign_modal .custom_date_picker .rmdp-input {
+    padding: 11px 15px;
+    outline: none;
+    border: 1px solid #6f6b7d;
+    font-size:16px;
+    font-family: var(--family);
+    font-weight: 400;
+    text-transform: capitalize;
+    border-radius: 5px;
+    height: auto;
+    width: 100%;
+    margin: 0;
+}
+
+.campaign_modal .custom_date_picker .rmdp-input::placeholder {
+    color: #5d596c;
+}
+
+.campaign_modal .custom_date_picker .rmdp-header {
+    font-family: var(--family);
+    font-weight: 400;
+}
+
+.campaign_modal .custom_date_picker .rmdp-header button i {
+    border: solid #405189;
+    border-width: 0 2px 2px 0;
+}
+
+.campaign_modal .custom_date_picker .rmdp-day-picker {
+    font-family: var(--family);
+    font-weight: 400;
+}
+
+.campaign_modal .custom_date_picker .rmdp-day-picker .rmdp-week-day {
+    color: #405189;
+}
+.campaign_modal .custom_date_picker .rmdp-day-picker .rmdp-week .rmdp-today span {
+    background-color: #45b369;
+}
+
+.campaign_modal .custom_date_picker .rmdp-day-picker .rmdp-week .rmdp-range {
+    background-color: #45b369;
+    border-radius: 50px;
+}
+
+.campaign_modal .custom_date_picker .rmdp-day-picker .rmdp-week .rmdp-day span:hover {
+    background: #45b369;
+}
