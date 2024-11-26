@@ -6,7 +6,7 @@ import { getUser, getRole } from '@api/userApi';
 import { fetchCities } from '@api/cityApi';
 import { fetchCampaigns } from '@api/campaignApi';
 
-/** Countries **/
+/** Countries and cities**/
 export function useFetchCountries() {
     return useQuery({
         queryKey: ['country'],

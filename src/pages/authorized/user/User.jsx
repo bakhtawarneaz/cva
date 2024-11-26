@@ -4,7 +4,6 @@ import React, { useMemo, useRef, useState } from 'react'
 import { IoChevronForwardOutline } from "react-icons/io5";
 import { FiPlus } from "react-icons/fi";
 import { LuRefreshCw } from "react-icons/lu";
-import { TfiWorld } from "react-icons/tfi";
 import { FiEdit } from "react-icons/fi";
 import { FaRegTrashAlt } from "react-icons/fa";
 
@@ -24,7 +23,6 @@ import { uploadFile } from '@api/uploadApi';
 /* packages...*/
 import toast from 'react-hot-toast';
 import { useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
 import { useQueryClient } from '@tanstack/react-query';
 import { MuiColorInput, matchIsValidColor } from 'mui-color-input'
@@ -60,6 +58,7 @@ const User = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [editingUser, setEditingUser] = useState(null);
     const [searchTerm, setSearchTerm] = useState("");
+    const [originalUser, setOriginalUser] = useState(null);
 
      /* Variables Here...*/
      const PARAMS = {
@@ -126,10 +125,13 @@ const User = () => {
         city_id: data.city_id === "" ? null : data.city_id,
       };
       if (editingUser) {
-        const UPDATED_PAY_LOAD = {
-          ...PAY_LOAD
-        };
-        editMutation.mutate(UPDATED_PAY_LOAD);
+        const UPDATED_PAY_LOAD = Object.keys(PAY_LOAD).reduce((updatedFields, key) => {
+          if (PAY_LOAD[key] !== originalUser[key]) {
+            updatedFields[key] = PAY_LOAD[key];
+          }
+          return updatedFields;
+        }, {});
+        editMutation.mutate({ id: editingUser.id, data: UPDATED_PAY_LOAD });
       } else {
         createMutation.mutate(PAY_LOAD);
       }
@@ -139,15 +141,8 @@ const User = () => {
       const selected = user.find((org) => org.id === id);
       if (selected) {
         setEditingUser(selected);
-        if (selected.dt) {
-          const formattedDate = format(parseISO(selected.dt), 'yyyy-MM-dd');
-          setValue('dt', formattedDate);
-        }
-        Object.keys(selected).forEach((key) => {
-          if (key !== 'dt') {
-            setValue(key, selected[key]);
-          }
-        });
+        setOriginalUser(selected);
+        Object.keys(selected).forEach((key) => setValue(key, selected[key]));
         setUploadedImage(selected.profile_image);
         setIsModalOpen(true);
       } else {
