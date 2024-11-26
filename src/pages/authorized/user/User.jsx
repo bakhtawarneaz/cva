@@ -38,7 +38,7 @@ import { useFetchRole, useFetchOrganizationsAll, useFetchBrandAll, useFetchCity,
 
 const User = () => {
 
-  const { register, handleSubmit, formState: { errors }, setValue, clearErrors, reset, control } = useForm(
+  const { register, handleSubmit, formState: { errors }, setValue, clearErrors, reset, control, watch } = useForm(
      {
           defaultValues: {
             primary_color: "#202f5f",
@@ -48,7 +48,6 @@ const User = () => {
     );
 
     /* Redus State Here...*/
-    const userId = useSelector((state) => state.auth.user.id);
 
     /* UseState Here...*/
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -95,6 +94,12 @@ const User = () => {
     };
 
     const queryClient = useQueryClient();
+
+    const selectedRoleId = watch("role_id");
+    const isOrganizationEnabled = selectedRoleId === "66";
+    const isBrandEnabled = selectedRoleId === "80" || selectedRoleId === "61" || selectedRoleId === "82";
+    const isCampaignEnabled = selectedRoleId === "61" || selectedRoleId === "82";
+    const isCityEnabled = selectedRoleId === "61" || selectedRoleId === "82";
     
     /* Hooks...*/
     const fileInputRef = useRef(null); 
@@ -142,7 +147,12 @@ const User = () => {
       if (selected) {
         setEditingUser(selected);
         setOriginalUser(selected);
+        setValue('clientId', selected.organization_id === "0" ? "" : selected.organization_id);
         Object.keys(selected).forEach((key) => setValue(key, selected[key]));
+        if (selected.role_id !== "66") setValue('clientId', '');
+        if (!["80", "61", "82"].includes(selected.role_id)) setValue('brand_id', '');
+        if (!["61", "82"].includes(selected.role_id)) setValue('campaign_id', '');
+        if (!["61", "82"].includes(selected.role_id)) setValue('city_id', '');
         setUploadedImage(selected.profile_image);
         setIsModalOpen(true);
       } else {
@@ -243,9 +253,22 @@ const User = () => {
       { key: "number", label: "Phone" },
       { key: "email", label: "Email" },
       { key: "gender", label: "Gender"},
-      { key: "role_name", label: "Role" },
-      { key: "organization_name", label: "Organizations"},
-      { key: "city_name", label: "City"},
+      { 
+        key: "role_name", 
+        label: "Role",
+        render: (row) => row.role_name || "-",
+      },
+      { 
+        key: "organization_name", 
+        label: "Organizations",
+        render: (row) => row.organization_name || "-",
+      },
+      { 
+        key: "city_name", 
+        label: "City",
+        render: (row) => row.city_name || "-",
+      },
+        
       { 
         key: "dt", 
         label: "Created Date",
@@ -451,7 +474,17 @@ const User = () => {
               
               <div className='form_group'>
                 <label>Role</label>
-                <select {...register('role_id', { required: true })}>
+                <select 
+                  {...register('role_id', { required: true })}
+                  onChange={(e) => {
+                    const selectedRole = e.target.value;
+                    setValue('role_id', selectedRole);
+                    if (selectedRole !== "66") setValue('clientId', '');
+                    if (!["80", "61", "82"].includes(selectedRole)) setValue('brand_id', '');
+                    if (!["61", "82"].includes(selectedRole)) setValue('campaign_id', '');
+                    if (!["61", "82"].includes(selectedRole)) setValue('city_id', '');
+                  }}
+                >
                   <option value="">select role</option>
                   {
                     roleData?.data?.list?.data?.map(role => (
@@ -464,7 +497,12 @@ const User = () => {
 
               <div className='form_group'>
                 <label>Organization</label>
-                <select {...register('organization_id', { required: true })}>
+                <select 
+                  {...register("clientId", {
+                    required: isOrganizationEnabled ? "Organization is required" : false,
+                  })}
+                  disabled={!isOrganizationEnabled}
+                >
                   <option value="">select organization</option>
                   {
                     organizationData?.data?.clients?.data?.map(organization => (
@@ -472,12 +510,17 @@ const User = () => {
                     ))
                   }
                 </select>
-                {errors.organization_id && <p className='error'>organization is required</p>}
+                {errors.clientId && <p className='error'>organization is required</p>}
               </div>
 
               <div className='form_group'>
                 <label>Brand</label>
-                <select {...register('brand_id', { required: true })}>
+                <select 
+                  {...register("brand_id", {
+                    required: isBrandEnabled ? "Brand is required" : false,
+                  })}
+                  disabled={!isBrandEnabled}
+                >
                   <option value="">select brand</option>
                   {
                     brandData?.data?.brand?.data?.map(brand => (
@@ -490,7 +533,12 @@ const User = () => {
 
               <div className='form_group'>
                 <label>Campaign</label>
-                <select {...register('campaign_id', { required: true })}>
+                <select 
+                  {...register("campaign_id", {
+                    required: isCampaignEnabled ? "Campaign is required" : false,
+                  })}
+                  disabled={!isCampaignEnabled}
+                > 
                   <option value="">select campaign</option>
                   {
                     campaignsData?.data?.fetchCampaign?.campaigns?.map(campaign => (
@@ -503,7 +551,12 @@ const User = () => {
 
               <div className='form_group'>
                 <label>City</label>
-                <select {...register('city_id', { required: true })}>
+                <select 
+                  {...register("city_id", {
+                    required: isCityEnabled ? "City is required" : false,
+                  })}
+                  disabled={!isCityEnabled}
+                >
                   <option value="">select city</option>
                   {
                     citiesData?.data?.fetchCity?.map(city => (

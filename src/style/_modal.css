@@ -171,6 +171,10 @@
   text-transform: capitalize;
 }
 
+.modal_body form .form_group select[disabled] {
+  cursor: no-drop;
+}
+
 .modal_body form .form_group textarea {
   width: 100%;
   border: 1px solid #dbdade;
