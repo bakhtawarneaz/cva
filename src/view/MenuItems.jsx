@@ -31,7 +31,7 @@ export const MenuItems = [
         icon: <FaUsers />,
     },
     {
-        title: 'Campaign',
+        title: 'Campaign List',
         icon: <MdCampaign />,
         children: [
             { title: 'Campaign', path: getDynamicPath('/campaign') },
@@ -44,7 +44,6 @@ export const MenuItems = [
             { title: 'BAPerformance', path: getDynamicPath('/campaign', 'baPerformance') },
             { title: 'SyncHistory', path: getDynamicPath('/campaign', 'syncHistory') },
             { title: 'BAAttendance', path: getDynamicPath('/campaign', 'baAttendance') },
-            { title: 'BACampaign', path: getDynamicPath('/campaign', 'baCampaign') },
             { title: 'Town', path: getDynamicPath('/campaign', 'town') },
             { title: 'Area', path: getDynamicPath('/campaign', 'area') },
             { title: 'Team', path: getDynamicPath('/campaign', 'team') },

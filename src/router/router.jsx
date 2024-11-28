@@ -13,7 +13,7 @@ import Home from '@authPages/home/Home';
 import Organization from '@authPages/organization/Organization';
 import Brand from '@authPages/brand/Brand';
 import User from '@authPages/user/User';
-import Campaign from '@authPages/campaign/Campaign';
+import CampaignList from '@authPages/campaignList/CampaignList';
 import BA from '@authPages/ba/BA';
 
 
@@ -27,7 +27,7 @@ import BackCheckerReport from '@authPages/backCheckerReport/BackCheckerReport';
 import BAPerformance from '@authPages/baPerformance/BAPerformance';
 import SyncHistory from '@authPages/syncHistory/SyncHistory';
 import BAAttendance from '@authPages/baAttendance/BAAttendance';
-import BACampaign from '@authPages/baCampaign/BACampaign';
+import Campaign from '@authPages/campaign/Campaign';
 import Town from '@authPages/town/Town';
 import Area from '@authPages/area/Area';
 import Team from '@authPages/team/Team';
@@ -63,10 +63,11 @@ const router = createBrowserRouter([
             { path: 'brand', element: <ProtectedRoute element={<Brand />} allowedRoles={[65]} /> }, 
             { path: 'user', element: <ProtectedRoute element={<User />} allowedRoles={[65]} /> }, 
             { 
-                path: 'campaign', 
-                element: <ProtectedRoute element={<Campaign />} allowedRoles={[65, 66, 80, 61, 82]} />, 
+                path: 'campaign-list', 
+                element: <ProtectedRoute element={<CampaignList />} allowedRoles={[65, 66, 80, 61, 82]} />, 
                 children: [
-                    { path: '', element: <Navigate to="deal" /> },
+                    { path: '', element: <Navigate to="campaign" /> },
+                    { path: 'campaign', element: <ProtectedRoute element={<Campaign />} allowedRoles={[65, 66, 80, 61, 82]} /> },
                     { path: 'deal', element: <ProtectedRoute element={<Deal />} allowedRoles={[65, 66, 80, 61, 82]} /> },
                     { path: 'gift', element: <ProtectedRoute element={<Gift />} allowedRoles={[65, 66, 80, 61, 82]} /> },
                     { path: 'sample', element: <ProtectedRoute element={<Sample />} allowedRoles={[65, 66, 80, 61, 82]} /> },
@@ -76,7 +77,7 @@ const router = createBrowserRouter([
                     { path: 'baPerformance', element: <ProtectedRoute element={<BAPerformance />} allowedRoles={[65, 66, 80, 61, 82]} /> },
                     { path: 'syncHistory', element: <ProtectedRoute element={<SyncHistory />} allowedRoles={[65, 66, 80, 61, 82]} /> },
                     { path: 'baAttendance', element: <ProtectedRoute element={<BAAttendance />} allowedRoles={[65, 66, 80, 61, 82]} /> },
-                    { path: 'baCampaign', element: <ProtectedRoute element={<BACampaign />} allowedRoles={[65, 66, 80, 61, 82]} /> },
+                 
                     { path: 'town', element: <ProtectedRoute element={<Town />} allowedRoles={[65, 66, 80, 61, 82]} /> },
                     { path: 'area', element: <ProtectedRoute element={<Area />} allowedRoles={[65, 66, 80, 61, 82]} /> },
                     { path: 'team', element: <ProtectedRoute element={<Team />} allowedRoles={[65, 66, 80, 61, 82]} /> },

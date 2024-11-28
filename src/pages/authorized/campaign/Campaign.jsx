@@ -4,9 +4,7 @@ import React, { useMemo, useRef, useState } from 'react'
 import { IoChevronForwardOutline } from "react-icons/io5";
 import { FiPlus } from "react-icons/fi";
 import { LuRefreshCw } from "react-icons/lu";
-import { TfiWorld } from "react-icons/tfi";
 import { FiEdit } from "react-icons/fi";
-import { FaRegTrashAlt } from "react-icons/fa";
 
 /* components...*/
 import Modal from '@components/Modal';
@@ -18,7 +16,7 @@ import Switch from '@components/Switch';
 /* packages...*/
 import toast from 'react-hot-toast';
 import { useSelector } from 'react-redux';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { useQueryClient } from '@tanstack/react-query';
 import { parseISO, format } from 'date-fns';
 import DatePicker from "react-multi-date-picker";
@@ -33,146 +31,156 @@ import { useCreateCampaign, useEditCampaign, useDeleteCampaign } from '@hooks/us
 import { useFetchCampaign, useFetchCity, useFetchBrandAll } from '@hooks/useQuery';
 
 const Campaign = () => {
-  
-  const { register, handleSubmit, formState: { errors }, setValue, clearErrors, reset } = useForm();
+    const { register, handleSubmit, formState: { errors }, setValue, control, clearErrors, reset } = useForm();
 
-      /* Redus State Here...*/
-      const userId = useSelector((state) => state.auth.user.id);
+    /* Redus State Here...*/
+    const userId = useSelector((state) => state.auth.user.id);
 
-      /* UseState Here...*/
-      const [isModalOpen, setIsModalOpen] = useState(false);
-      const [currentPage, setCurrentPage] = useState(1);
-      const [editingCampaign, setEditingCampaign] = useState(null);
-      const [searchTerm, setSearchTerm] = useState("");
-      const [dateRange, setDateRange] = useState([]);
-   
-      /* Variables Here...*/
-     const PARAMS = {
-       page: currentPage,
-       per_page: 10,
-     };
+    /* UseState Here...*/
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [editingCampaign, setEditingCampaign] = useState(null);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [dateRange, setDateRange] = useState([]);
 
-     const BRAND_PARAMS = {
-      page: null,
-      perPage: null,
+    /* Variables Here...*/
+  const PARAMS = {
+    page: currentPage,
+    per_page: 10,
+  };
+
+  const BRAND_PARAMS = {
+    page: null,
+    perPage: null,
+  };
+
+  const queryClient = useQueryClient();
+
+  /* Hooks...*/
+  const datePickerRef = useRef(null);
+
+
+  /* Queries */
+  const { data: campaignsData, isLoading: isCampaignLoading } = useFetchCampaign(PARAMS);
+  const { data: citiesData } = useFetchCity();
+  const { data: brandData } = useFetchBrandAll(BRAND_PARAMS);
+
+  /* Mutations */
+  const createMutation = useCreateCampaign(reset, closeModal);
+  const editMutation = useEditCampaign(closeModal);
+  const deleteMutation = useDeleteCampaign();
+
+  const campaign = campaignsData?.data?.fetchCampaign?.campaigns || [];
+  const meta = campaignsData?.data?.fetchCampaign?.meta || {};
+
+  /* Functions Here...*/
+  const onSubmit = (data) => {
+    const cityIdsArray = Array.isArray(data.city_ids) ? data.city_ids : [data.city_ids];
+    const { dateRange, ...rest } = data;
+    const PAY_LOAD = {
+      ...rest,
+      start_date: format(dateRange[0], 'yyyy-MM-dd'),
+      end_date: format(dateRange[1], 'yyyy-MM-dd'),
+      created_by: parseInt(userId),
+      is_active: true,
+      city_ids: cityIdsArray,
+      columnNames:[]
     };
-
-     const queryClient = useQueryClient();
-
-    /* Hooks...*/
-    const datePickerRef = useRef(null);
-
-  
-    /* Queries */
-    const { data: campaignsData, isLoading: isCampaignLoading } = useFetchCampaign(PARAMS);
-    const { data: citiesData } = useFetchCity();
-    const { data: brandData } = useFetchBrandAll(BRAND_PARAMS);
-  
-    /* Mutations */
-    const createMutation = useCreateCampaign(reset, closeModal);
-    const editMutation = useEditCampaign(closeModal);
-    const deleteMutation = useDeleteCampaign();
-  
-    const campaign = campaignsData?.data?.fetchCampaign?.campaigns || [];
-    const meta = campaignsData?.data?.fetchCampaign?.meta || {};
-
-     /* Functions Here...*/
-     const onSubmit = (data) => {
-
-      const cityIdsArray = Array.isArray(data.city_ids) ? data.city_ids : [data.city_ids];
-
-      const PAY_LOAD = {
-        ...data,
-        start_date: format(new Date(dateRange[0]), 'yyyy-MM-dd'),
-        end_date: format(new Date(dateRange[1]), 'yyyy-MM-dd'),
-        created_by: parseInt(userId),
-        is_active: true,
-        city_ids: cityIdsArray,
+    if (editingCampaign) {
+      const UPDATED_PAY_LOAD = {
+        ...PAY_LOAD,
+        columnNames:[]
       };
-      if (editingCampaign) {
-        const UPDATED_PAY_LOAD = {
-          ...PAY_LOAD,
-        };
-        editMutation.mutate(UPDATED_PAY_LOAD);
+      editMutation.mutate(UPDATED_PAY_LOAD);
+    } else {
+      createMutation.mutate(PAY_LOAD);
+    }
+  };
+
+  const handleEdit = (id) => {
+    const selected = campaign.find((org) => org.id === id);
+    if (selected) {
+      setEditingCampaign(selected);
+      const startDate = selected.start_date ? parseISO(selected.start_date) : null;
+      const endDate = selected.end_date ? parseISO(selected.end_date) : null;
+      if (startDate && endDate) {
+        setDateRange([startDate, endDate]);
+        setValue("dateRange", [startDate, endDate]);
       } else {
-        createMutation.mutate(PAY_LOAD);
+        setDateRange([]);
+        setValue("dateRange", []);
+        toast.error("Invalid date format in campaign data.");
       }
-    };
+      Object.keys(selected).forEach((key) => setValue(key, selected[key]));
+      setIsModalOpen(true);
+    } else {
+      toast.error('Failed to find campaign data.');
+    }
+  };
 
-    const handleEdit = (id) => {
-      const selected = campaign.find((org) => org.id === id);
-      if (selected) {
-        setEditingCampaign(selected);
-        Object.keys(selected).forEach((key) => setValue(key, selected[key]));
-        setIsModalOpen(true);
-      } else {
-        toast.error('Failed to find campaign data.');
-      }
-    };
-  
-     function closeModal() {
-      setIsModalOpen(false);
-      setEditingCampaign(null);
-      clearErrors();
-      reset();
-    };
-  
-    const handleToggle = (id, status) => {
-      const PAY_LOAD = { 
-        id, 
-        status: status 
-      };
-      deleteMutation.mutate(PAY_LOAD);
-    };
+  function closeModal() {
+    setIsModalOpen(false);
+    setEditingCampaign(null);
+    clearErrors();
+    reset();
+  };
 
-     const handleReload = () => {
-      queryClient.invalidateQueries({ queryKey: ['campaign']});
+  const handleToggle = (id, status) => {
+    const PAY_LOAD = { 
+      id, 
+      status: status 
     };
+    deleteMutation.mutate(PAY_LOAD);
+  };
 
-    const handleDateChange = (value) => {
-      setDateRange(value);
-      if (value.length === 2 && datePickerRef.current ) {
-        datePickerRef.current.closeCalendar();
-      }
-    };
-  
-    /* Table code Here...*/
-    const handlePageChange = (page) => {
-      if (page > 0 && page <= (meta?.totalPages)) {
-        setCurrentPage(page);
-      }
-    };
-  
-    const columns = [
-      { key: "id", label: "ID" },
-      { key: "name", label: "Name" },
-      { key: "campaign_type_name", label: "Campaign Type" },
-      { key: "start_date", label: "Start Date", render: (row) => format(parseISO(row.start_date), 'yyyy-MM-dd'),  },
-      { key: "end_date", label: "End Date", render: (row) => format(parseISO(row.end_date), 'yyyy-MM-dd'), },
-      { key: "created_on", label: "Created Date", render: (row) => format(parseISO(row.created_on), 'yyyy-MM-dd'), },
-      { 
-        key: "is_active", 
-        label: "Status", 
-        render: (row) => (
-          <Switch
-            className={row.is_active ? 'active' : ''}
-            isChecked={row.is_active}
-            onToggle={() => handleToggle(row.id, !row.is_active)}
-          />
-        ), 
-      },
-    ];
-  
-    /* Filter...*/
-    const filteredData = useMemo(() => {
-      if (!searchTerm) return campaign;
-      return campaign.filter((item) =>
-        item.name.toLowerCase().includes(searchTerm.toLowerCase())
-      );
+  const handleReload = () => {
+    queryClient.invalidateQueries({ queryKey: ['campaign']});
+  };
+
+  /* Table code Here...*/
+  const handlePageChange = (page) => {
+    if (page > 0 && page <= (meta?.totalPages)) {
+      setCurrentPage(page);
+    }
+  };
+
+  const handleDateChange = (value) => {
+    setDateRange(value);
+    if (value.length === 2 && datePickerRef.current ) {
+      datePickerRef.current.closeCalendar();
+    }
+  };
+
+  const columns = [
+    { key: "id", label: "ID" },
+    { key: "name", label: "Name" },
+    { key: "campaign_type_name", label: "Campaign Type" },
+    { key: "start_date", label: "Start Date", render: (row) => format(parseISO(row.start_date), 'yyyy-MM-dd'),  },
+    { key: "end_date", label: "End Date", render: (row) => format(parseISO(row.end_date), 'yyyy-MM-dd'), },
+    { key: "created_on", label: "Created Date", render: (row) => format(parseISO(row.created_on), 'yyyy-MM-dd'), },
+    { 
+      key: "is_active", 
+      label: "Status", 
+      render: (row) => (
+        <Switch
+          className={row.is_active ? 'active' : ''}
+          isChecked={row.is_active}
+          onToggle={() => handleToggle(row.id, !row.is_active)}
+        />
+      ), 
+    },
+  ];
+
+  /* Filter...*/
+  const filteredData = useMemo(() => {
+    if (!searchTerm) return campaign;
+    return campaign.filter((item) =>
+      item.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
   }, [searchTerm, campaign]);
 
   return (
-    <>
+   <>
       <div className='campaign_wrap'>
 
           {/* BreadCrumb */}
@@ -306,17 +314,33 @@ const Campaign = () => {
 
                 <div className='form_group custom_date_picker'>
                   <label>Start Date & End Date</label>
-                  <DatePicker
-                    value={dateRange}
-                    onChange={handleDateChange}
-                    ref={datePickerRef}
-                    range
-                    numberOfMonths={2}
-                    dateSeparator=" - "
-                    placeholder="Select Date Range"
-                    showOtherDays
-                    monthYearSeparator="-"
-                  />
+                    <Controller
+                      control={control}
+                      name="dateRange"
+                      rules={{
+                        validate: (value) =>
+                          value?.length === 2 || "date is required",
+                      }}
+                      render={({ field: { onChange } }) => (
+                        <DatePicker
+                          value={dateRange}
+                          onChange={(dates) => {
+                            const parsedDates = dates.map((date) => (date instanceof Date ? date : new Date(date)));
+                            onChange(parsedDates);
+                            setDateRange(parsedDates);
+                            if (dates?.length === 2) {
+                              datePickerRef.current?.closeCalendar();
+                            }
+                          }}
+                          ref={datePickerRef}
+                          range
+                          numberOfMonths={2}
+                          placeholder="Select Date Range"
+                          dateSeparator=" - "
+                        />
+                      )}
+                    />
+                    {errors.dateRange && <p className="error">{errors.dateRange.message}</p>}
                 </div>
               </div>
             <div className='modal_btn_cover'>
