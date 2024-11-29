@@ -48,7 +48,6 @@ const DashboardLayout = () => {
   const currentYear = new Date().getFullYear();
   const profileRef = useRef(null);
   const allowedMenus = getMenuByRole(user?.role_id);
-  
 
   /* Functions Here...*/
   const toggleVisibility = (event) => {
@@ -69,7 +68,8 @@ const DashboardLayout = () => {
   }
 
   const handleLogout = () => dispatch(logout());
-  const toggleSidebar = () => setIsSidebarCollapsed((prev) => !prev);;
+  const toggleSidebar = () => setIsSidebarCollapsed((prev) => !prev);
+
 
   return (
     <div className='site-wraper'>

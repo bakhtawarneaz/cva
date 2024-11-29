@@ -44,6 +44,8 @@ const ProtectedRoute = ({ element, allowedRoles }) => {
 
     if (allowedRoles.includes(Number(user?.role_id))) {
         return element;
+    } else {
+        return <Navigate to="/not-found" replace />;
     }
 };
 
@@ -51,6 +53,15 @@ const router = createBrowserRouter([
     {
         path: '/',
         element: <Navigate to="/auth/login" />,
+        errorElement: <NotFound />,
+    },
+    {
+        path: '/auth',
+        element: <AuthLayout />,
+        children: [
+            { path: '', element: <Navigate to="login" /> },
+            { path: 'login',element: <Login /> }
+        ],
         errorElement: <NotFound />,
     },
     {
@@ -77,7 +88,6 @@ const router = createBrowserRouter([
                     { path: 'baPerformance', element: <ProtectedRoute element={<BAPerformance />} allowedRoles={[65, 66, 80, 61, 82]} /> },
                     { path: 'syncHistory', element: <ProtectedRoute element={<SyncHistory />} allowedRoles={[65, 66, 80, 61, 82]} /> },
                     { path: 'baAttendance', element: <ProtectedRoute element={<BAAttendance />} allowedRoles={[65, 66, 80, 61, 82]} /> },
-                 
                     { path: 'town', element: <ProtectedRoute element={<Town />} allowedRoles={[65, 66, 80, 61, 82]} /> },
                     { path: 'area', element: <ProtectedRoute element={<Area />} allowedRoles={[65, 66, 80, 61, 82]} /> },
                     { path: 'team', element: <ProtectedRoute element={<Team />} allowedRoles={[65, 66, 80, 61, 82]} /> },
@@ -89,14 +99,9 @@ const router = createBrowserRouter([
         errorElement: <NotFound />,
     },
     {
-        path: '/auth',
-        element: <AuthLayout />,
-        children: [
-            { path: '', element: <Navigate to="login" /> },
-            { path: 'login',element: <Login /> }
-        ],
-        errorElement: <NotFound />,
-    },
+        path: '/not-found',
+        element: <NotFound />, 
+    }
 
 ]);
 

@@ -24,7 +24,6 @@ const MenuList = ({ item, isSidebarCollapsed }) => {
 
   /* Variables Here...*/
   const isActive = location.pathname === item.path;
-
   return (
     <>
       <li
