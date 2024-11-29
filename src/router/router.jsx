@@ -101,8 +101,11 @@ const router = createBrowserRouter([
     {
         path: '/not-found',
         element: <NotFound />, 
-    }
-
+    },
+    { 
+        path: '*', 
+        element: <Navigate to="/not-found" replace /> 
+    },
 ]);
 
 export default router;

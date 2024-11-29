@@ -21,15 +21,15 @@ import AuthFormLogo from  '@assets/cva-logo.png';
 import UserProfilePic from  '@assets/11.png';
 import hand from '@assets/hand.gif';
 
-/* view...*/
-import { MenuItems } from '@view/MenuItems';
 
 /* components...*/
 import BackToTopButton from '@components/BackToTopButton';
-import MenuList from '@components/MenuList';
+
 
 /* helper...*/
 import { getMenuByRole } from '@helper/RoleHelper';
+import MenuList from '@helper/MenuList';
+import { MenuItems } from '@helper/MenuItems';
 
 const DashboardLayout = () => {
 
