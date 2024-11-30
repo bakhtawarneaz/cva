@@ -218,7 +218,7 @@ table tbody td svg {
 }
 
 .pagination .paginate_btn[disabled] {
-    background: #405189;
+    background: var(--primary-color);
     opacity: 0.4;
     cursor: not-allowed;
 }

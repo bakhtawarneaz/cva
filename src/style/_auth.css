@@ -150,7 +150,6 @@
 
 .auth-form-btn .site-btn[disabled] {
     cursor: not-allowed;
-    background: #405189;
     opacity: 0.4;
     border: 0;
 }

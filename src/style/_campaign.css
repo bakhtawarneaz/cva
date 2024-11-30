@@ -26,7 +26,7 @@
 }
 
 .campaign_modal .custom_date_picker .rmdp-header button i {
-    border: solid #405189;
+    border: solid var(--primary-color); 
     border-width: 0 2px 2px 0;
 }
 
@@ -36,7 +36,7 @@
 }
 
 .campaign_modal .custom_date_picker .rmdp-day-picker .rmdp-week-day {
-    color: #405189;
+    color: var(--primary-color);
 }
 .campaign_modal .custom_date_picker .rmdp-day-picker .rmdp-week .rmdp-today span {
     background-color: #45b369;

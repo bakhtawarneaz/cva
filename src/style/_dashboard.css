@@ -9,7 +9,7 @@
 .sidebar {
     transition: all 0.2s, background 0s;
     position: relative;
-    background: #405189;
+    background: var(--primary-color);
     box-shadow: 0 0.125rem 0.25rem rgba(165, 163, 174, 0.3);
 }
 
@@ -165,10 +165,6 @@
     border-radius: 12px;
     text-decoration: none;
     position: relative;
-}
-
-.sidebar_menu li a.active {
-    background: var(--primary-color);
 }
 
 .sidebar_menu li a svg {

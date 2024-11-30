@@ -233,7 +233,7 @@
 }
 
 .modal_btn_cover .btn[disabled] {
-  background: #405189;
+  background: var(--primary-color);
   opacity: 0.4;
   cursor: not-allowed;
 }

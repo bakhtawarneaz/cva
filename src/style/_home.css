@@ -91,7 +91,7 @@
 }
 
 .dashboard_filter .left span {
-    background: #405189;
+    background: var(--primary-color);
     border-radius: 5px;
     padding: 8px 15px;
     color: #fff;
@@ -122,7 +122,7 @@
     padding: 8px 15px;
     width: 100%;
     outline: none;
-    border: 1px solid #405189;
+    border: 1px solid var(--primary-color);
     font-size: 16px;
     font-family: var(--family);
     font-weight: 400;
@@ -137,7 +137,7 @@
 .dashboard_filter .custom_date_picker .rmdp-input {
     padding: 8px 35px 8px 15px;
     outline: none;
-    border: 1px solid #405189;
+    border: 1px solid var(--primary-color);
     font-size:16px;
     font-family: var(--family);
     font-weight: 400;
@@ -163,7 +163,7 @@
     width: 100%;
     padding: 8px 15px;
     border: 0;
-    background: #405189;
+    background: var(--primary-color);
     border-radius: 5px;
     color: #fff;
     font-size: 16px;
@@ -175,7 +175,7 @@
 }
 
 .dashboard_filter form .btn_group button[disabled] {
-    background: #405189;
+    background: var(--primary-color);
     opacity: 0.4;
     transition: 0.5s all;
     cursor: not-allowed;
@@ -187,7 +187,7 @@
 }
 
 .dashboard_filter .custom_date_picker .rmdp-header button i {
-    border: solid #405189;
+    border: solid var(--primary-color);
     border-width: 0 2px 2px 0;
 }
 
@@ -197,7 +197,7 @@
 }
 
 .dashboard_filter .custom_date_picker .rmdp-day-picker .rmdp-week-day {
-    color: #405189;
+    color: var(--primary-color);
 }
 .dashboard_filter .custom_date_picker .rmdp-day-picker .rmdp-week .rmdp-today span {
     background-color: #45b369;
