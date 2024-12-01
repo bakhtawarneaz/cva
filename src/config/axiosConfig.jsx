@@ -3,8 +3,15 @@ import { store } from '../redux/store';
 import { logout } from '../redux/slices/authSlice';
 import toast from 'react-hot-toast';
 
-//const BASE_URL = 'http://localhost:3055/v1';
-const BASE_URL = 'https://cva-be.its.com.pk/v1';
+
+// local
+// const BASE_URL = 'http://localhost:3055/v1';
+
+// went
+const BASE_URL = 'https://cva-be-went.its.com.pk/v1';
+
+// live
+// const BASE_URL = 'https://cva-be.its.com.pk/v1';
 
 const api = axios.create({
   baseURL: BASE_URL,

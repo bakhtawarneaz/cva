@@ -2,7 +2,7 @@ import React from "react";
 import TableBlank from "./TableBlank";
 import Loading from "./Loading";
 
-const TableComponent = ({ columns, data, isLoading, renderActions, actionLabel = "Action", skeletonRowCount = 10 }) => {
+const TableComponent = ({ columns, data, isLoading, renderActions, actionLabel = "Action", skeletonRowCount = 10, onRowClick }) => {
 
   const renderSkeletonRows = () => {
     return Array.from({ length: skeletonRowCount }).map((_, rowIndex) => (
@@ -36,13 +36,17 @@ const TableComponent = ({ columns, data, isLoading, renderActions, actionLabel =
             renderSkeletonRows()
           ) : data.length > 0 ? (
             data.map((row) => (
-              <tr key={row.id}>
+              <tr 
+                key={row.id}
+                onClick={() => onRowClick && onRowClick(row)}
+                style={{ cursor: onRowClick ? "pointer" : "default" }}
+              >
                 {columns.map((column) => (
                   <td key={column.key}>{column.render ? column.render(row) : row[column.key]}</td>
                 ))}
                 {renderActions && (
                   <td>
-                    <div className="table_action">
+                    <div className="table_action" onClick={(e) => e.stopPropagation()}>
                       {renderActions(row)}
                     </div>
                   </td>

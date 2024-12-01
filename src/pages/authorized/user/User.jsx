@@ -250,8 +250,16 @@ const User = () => {
         />,
       },
       { key: "username", label: "Name" },
-      { key: "number", label: "Phone" },
-      { key: "email", label: "Email" },
+      { 
+        key: "number", 
+        label: "Phone",
+        render: (row) => row.number || "-", 
+      },
+      { 
+        key: "email", 
+        label: "Email",
+        render: (row) => row.email || "-", 
+      },
       { key: "gender", label: "Gender"},
       { 
         key: "role_name", 

@@ -18,23 +18,25 @@ import BA from '@authPages/ba/BA';
 
 
 /************* Sub Menu *************/
-import Deal from '@authPages/deal/Deal';
-import Gift from '@authPages/gift/Gift';
-import Sample from '@authPages/sample/Sample';
-import Usership from '@authPages/usership/Usership';
-import Customer from '@authPages/customer/Customer';
-import BackCheckerReport from '@authPages/backCheckerReport/BackCheckerReport';
-import BAPerformance from '@authPages/baPerformance/BAPerformance';
-import SyncHistory from '@authPages/syncHistory/SyncHistory';
-import BAAttendance from '@authPages/baAttendance/BAAttendance';
-import Campaign from '@authPages/campaign/Campaign';
-import Town from '@authPages/town/Town';
-import Area from '@authPages/area/Area';
-import Team from '@authPages/team/Team';
-import Videos from '@authPages/videos/Videos';
+import Deal from '@authPages/campaignList/deal/Deal';
+import Gift from '@authPages/campaignList/gift/Gift';
+import Sample from '@authPages/campaignList/sample/Sample';
+import Usership from '@authPages/campaignList/usership/Usership';
+import Customer from '@authPages/campaignList/customer/Customer';
+import BackCheckerReport from '@authPages/campaignList/backCheckerReport/BackCheckerReport';
+import BAPerformance from '@authPages/campaignList/baPerformance/BAPerformance';
+import SyncHistory from '@authPages/campaignList/syncHistory/SyncHistory';
+import BAAttendance from '@authPages/campaignList/baAttendance/BAAttendance';
+import Campaign from '@authPages/campaignList/campaign/Campaign';
+import CampaignDetail from '@authPages/campaignList/campaign/campaignDetail/CampaignDetail';
+import Town from '@authPages/campaignList/town/Town';
+import Area from '@authPages/campaignList/area/Area';
+import Team from '@authPages/campaignList/team/Team';
+import Videos from '@authPages/campaignList/videos/Videos';
 
 /************* Not Found Links *************/
 import NotFound from '@components/NotFound';
+
 
 
 /************* Role Helper *************/
@@ -79,6 +81,7 @@ const router = createBrowserRouter([
                 children: [
                     { path: '', element: <Navigate to="campaign" /> },
                     { path: 'campaign', element: <ProtectedRoute element={<Campaign />} allowedRoles={[65, 66, 80, 61, 82]} /> },
+                    { path: 'campaign-detail/:id', element: <ProtectedRoute element={<CampaignDetail />} allowedRoles={[65, 66, 80, 61, 82]} /> },
                     { path: 'deal', element: <ProtectedRoute element={<Deal />} allowedRoles={[65, 66, 80, 61, 82]} /> },
                     { path: 'gift', element: <ProtectedRoute element={<Gift />} allowedRoles={[65, 66, 80, 61, 82]} /> },
                     { path: 'sample', element: <ProtectedRoute element={<Sample />} allowedRoles={[65, 66, 80, 61, 82]} /> },

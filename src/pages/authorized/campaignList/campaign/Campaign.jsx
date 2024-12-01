@@ -1,4 +1,5 @@
 import React, { useMemo, useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom';
 
 /* icons...*/
 import { IoChevronForwardOutline } from "react-icons/io5";
@@ -44,19 +45,19 @@ const Campaign = () => {
     const [dateRange, setDateRange] = useState([]);
 
     /* Variables Here...*/
-  const PARAMS = {
-    page: currentPage,
-    per_page: 10,
-  };
+    const PARAMS = {
+      page: currentPage,
+      per_page: 10,
+    };
 
-  const BRAND_PARAMS = {
-    page: null,
-    perPage: null,
-  };
-
-  const queryClient = useQueryClient();
+    const BRAND_PARAMS = {
+      page: null,
+      perPage: null,
+    };
 
   /* Hooks...*/
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const datePickerRef = useRef(null);
 
 
@@ -72,6 +73,9 @@ const Campaign = () => {
 
   const campaign = campaignsData?.data?.fetchCampaign?.campaigns || [];
   const meta = campaignsData?.data?.fetchCampaign?.meta || {};
+  const campaignColumns = campaignsData?.data?.fetchCampaign?.campaignColumns || [];
+
+  
 
   /* Functions Here...*/
   const onSubmit = (data) => {
@@ -84,12 +88,12 @@ const Campaign = () => {
       created_by: parseInt(userId),
       is_active: true,
       city_ids: cityIdsArray,
-      columnNames:[]
+      //columnNames:[]
     };
     if (editingCampaign) {
       const UPDATED_PAY_LOAD = {
         ...PAY_LOAD,
-        columnNames:[]
+        columnNames:campaignColumns
       };
       editMutation.mutate(UPDATED_PAY_LOAD);
     } else {
@@ -144,11 +148,8 @@ const Campaign = () => {
     }
   };
 
-  const handleDateChange = (value) => {
-    setDateRange(value);
-    if (value.length === 2 && datePickerRef.current ) {
-      datePickerRef.current.closeCalendar();
-    }
+  const handleRowClick = (row) => {
+    navigate(`/dashboard/campaign-list/campaign-detail/${row.id}`);
   };
 
   const columns = [
@@ -165,7 +166,10 @@ const Campaign = () => {
         <Switch
           className={row.is_active ? 'active' : ''}
           isChecked={row.is_active}
-          onToggle={() => handleToggle(row.id, !row.is_active)}
+          onToggle={(e) => {
+            e.stopPropagation();
+            handleToggle(row.id, !row.is_active)
+          }}
         />
       ), 
     },
@@ -222,9 +226,15 @@ const Campaign = () => {
                       data={filteredData}
                       isLoading={isCampaignLoading}
                       skeletonRowCount={10}
+                      onRowClick={handleRowClick}
                       renderActions={(row) => (
                         <span>
-                          <FiEdit onClick={() => handleEdit(row.id)} />
+                            <FiEdit  
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleEdit(row.id);
+                              }} 
+                            />
                         </span>
                       )}
                       actionLabel="Action"
