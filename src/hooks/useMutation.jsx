@@ -165,7 +165,9 @@ export function useEditCampaign(closeModal) {
     onSuccess: () => {
       toast.success('Campaign updated successfully!');
       queryClient.invalidateQueries({ queryKey: ['campaign'], exact: false });
-      closeModal();
+      if (closeModal) {
+        closeModal();
+      }
     },
   });
 }
