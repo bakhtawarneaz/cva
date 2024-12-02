@@ -36,6 +36,16 @@ const Color = () => {
         .sidebar_menu li a.active{
           background: linear-gradient(45deg, ${primaryColor}, ${gradientEndColor});
         }    
+        .sub_menu:before{
+          background: ${gradientEndColor};
+        }
+        .sub_menu li a:before{
+          background: ${gradientEndColor};
+        }
+        .sub_menu li a:after{
+          border-left: 2px solid ${gradientEndColor};
+          border-bottom: 2px solid ${gradientEndColor};
+        }
       `}
     />
   );

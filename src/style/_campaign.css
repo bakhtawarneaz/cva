@@ -54,7 +54,7 @@
 
 .field_wrap {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
     gap: 20px;
 }
 
@@ -105,8 +105,8 @@
 
 .check_cover input[type="checkbox"]:checked {
     box-shadow: 0 0.125rem 0.25rem rgba(165, 163, 174, 0.3);
-    background-color: #7367f0;
-    border-color: #7367f0;
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
 }
 
 .field_cover ul {
@@ -134,8 +134,8 @@
 
 .field_cover ul li input[type="checkbox"]:checked {
     box-shadow: 0 0.125rem 0.25rem rgba(165, 163, 174, 0.3);
-    background-color: #7367f0;
-    border-color: #7367f0;
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
 }
 
 .field_cover.center {
@@ -146,7 +146,41 @@
     gap: 15px;
 }
 
-.field_cover.center button {
+.field_cover ul li span {
+    color: #1C252E;
+    font-family: var(--family);
+    font-weight: 400;
+    font-size: 16px;
+}
+
+.camD_btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.camD_btn .btn1, 
+.camD_btn .btn2{
+    background-color: var(--primary-color);
+    box-shadow: 0px 2px 4px rgba(165, 163, 174, 0.4);
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: var(--family);
+    font-weight: 400;
+    font-size: 14px;
+    color: #fff;
+    text-transform: capitalize;
+}
+
+.camD_btn_wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-right: 20px;
+}
+
+.camD_btn .camD_btn_wrap button {
     background-color: var(--primary-color);
     box-shadow: 0px 2px 4px rgba(165, 163, 174, 0.4);
     border-radius: 50px;
@@ -158,19 +192,21 @@
     justify-content: center;
 }
 
-.field_cover.center button svg {
+.camD_btn .camD_btn_wrap button svg {
     color: #fff;
     font-size: 30px;
 }
 
-.field_cover.center button:disabled {
+.camD_btn .camD_btn_wrap button:disabled {
     cursor: no-drop;
     opacity: 0.6;
 }
 
-.field_cover ul li span {
-    color: #1C252E;
+.field_cover ul li input[type="text"] {
+    outline: none;
+    border: 1px solid var(--primary-color);
+    padding: 5px 15px;
     font-family: var(--family);
-    font-weight: 400;
     font-size: 16px;
+    font-weight: 400;
 }

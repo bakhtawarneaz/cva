@@ -10,16 +10,19 @@ import { useFetchCampaign } from "@hooks/useQuery";
 import { useEditCampaign } from "@hooks/useMutation";
 
 /* packages... */
-import { useQueryClient } from "@tanstack/react-query";
 import { useSelector } from "react-redux";
+
+/* components...*/
+import ButtonLoader from '@components/ButtonLoader';
 
 const CampaignDetail = () => {
 
-    /* Redus State Here...*/
-    const userId = useSelector((state) => state.auth.user.id);
+  /* Redus State Here...*/
+  const userId = useSelector((state) => state.auth.user.id);
 
   /* Hooks */
   const { id } = useParams();
+  const isInitialized = React.useRef(false);
 
   /* Query to Fetch Campaign Data */
   const PARAMS = { campaign_id: id };
@@ -28,7 +31,6 @@ const CampaignDetail = () => {
   /* Mutations */
   const editMutation = useEditCampaign();
 
-  // Extract campaignColumns and format column names
   const campaignColumns = campaignsData?.data?.fetchCampaign?.campaignColumns || [];
   const formattedColumnNames = campaignColumns.map((col) =>
     col.column_name
@@ -37,15 +39,16 @@ const CampaignDetail = () => {
       .join(" ")
   );
 
-  /* State Management */
-  const [availableItems, setAvailableItems] = useState([]); // Left column items
-  const [checkedLeft, setCheckedLeft] = useState([]); // Checked items in the left column
-  const [checkedRight, setCheckedRight] = useState([]); // Checked items in the right column
+  /* UseState Here...*/
+  const [availableItems, setAvailableItems] = useState([]); 
+  const [checkedLeft, setCheckedLeft] = useState([]); 
+  const [checkedRight, setCheckedRight] = useState([]); 
   const [dealMaxQty, setDealMaxQty] = useState("");
-  // Use a ref to track if the state has been initialized
-  const isInitialized = React.useRef(false);
+  const [sampleMaxQty, setSampleMaxQty] = useState("");
 
-  // Dynamically initialize availableItems from API response
+  
+
+ /* useEffect Here...*/
   useEffect(() => {
     if (campaignsData && !isInitialized.current) {
       const initialAvailableItems = formattedColumnNames.filter(
@@ -54,23 +57,26 @@ const CampaignDetail = () => {
       setAvailableItems(initialAvailableItems);
 
       const dealMaxQuantity = campaignsData?.data?.fetchCampaign.campaigns[0];
+      const sampleMaxQuantity = campaignsData?.data?.fetchCampaign.campaigns[0];
 
       if (dealMaxQuantity?.deal_max_quantity) {
         setDealMaxQty(dealMaxQuantity.deal_max_quantity);
       } 
+      if (sampleMaxQuantity?.sample_max_quantity) {
+        setSampleMaxQty(sampleMaxQuantity.sample_max_quantity);
+      } 
 
-      isInitialized.current = true; // Mark as initialized
+      isInitialized.current = true;
     }
   }, [campaignsData, formattedColumnNames, campaignColumns]);
 
-  // Dynamically derive `selectedItems` for the right column
+
   const selectedItems = formattedColumnNames.filter(
     (item) => !availableItems.includes(item)
   );
 
-  /* Handlers */
 
-  // Submit API
+  /* Functions Here...*/
   const onSubmit = async () => {
     const updatedColumns = campaignColumns.map((col) => {
       const columnNameFormatted = col.column_name
@@ -80,23 +86,22 @@ const CampaignDetail = () => {
 
       return {
         ...col,
-        value: availableItems.includes(columnNameFormatted), // True if in the left column
+        value: availableItems.includes(columnNameFormatted),
       };
     });
-
     const fetchCampaign = campaignsData?.data?.fetchCampaign.campaigns[0];
-
     const PAYLOAD = {
       created_by: parseInt(userId),
       ...fetchCampaign,
       deal_max_quantity:dealMaxQty,
-      columnNames: updatedColumns,        // Add updated columnNames
+      sample_max_quantity:sampleMaxQty,
+      columnNames: updatedColumns,   
     };
 
     editMutation.mutateAsync(PAYLOAD);
   };
 
-  // Toggle Select All
+
   const handleSelectAll = (isLeft) => {
     if (isLeft) {
       setCheckedLeft(
@@ -109,7 +114,6 @@ const CampaignDetail = () => {
     }
   };
 
-  // Toggle Single Item Selection
   const handleSingleSelect = (item, isLeft) => {
     if (isLeft) {
       setCheckedLeft((prev) =>
@@ -122,18 +126,17 @@ const CampaignDetail = () => {
     }
   };
 
-  // Add Items from Left to Right
   const handleAdd = () => {
     setAvailableItems((prev) =>
       prev.filter((item) => !checkedLeft.includes(item))
-    ); // Remove added items from the left column
-    setCheckedLeft([]); // Clear checked items in the left column
+    ); 
+    setCheckedLeft([]);
   };
 
-  // Remove Items from Right to Left
+  
   const handleRemove = () => {
-    setAvailableItems((prev) => [...prev, ...checkedRight]); // Add checked items to the left column
-    setCheckedRight([]); // Clear checked items in the right column
+    setAvailableItems((prev) => [...prev, ...checkedRight]); 
+    setCheckedRight([]);
   };
 
 
@@ -142,7 +145,25 @@ const CampaignDetail = () => {
       <div className="campaign_wrap">
         <div className="top_bar_heading">
           <h2>Campaign ID # {id}</h2>
-          <button onClick={onSubmit}>save</button>
+          <div className="camD_btn">
+              <div className="camD_btn_wrap">
+                <button onClick={handleAdd} disabled={checkedLeft.length === 0}>
+                  <IoChevronForward />
+                </button>
+                <button onClick={handleRemove} disabled={checkedRight.length === 0}>
+                  <IoChevronBackOutline />
+                </button>
+              </div>
+              <button className='btn2' disabled={editMutation.isPending} onClick={onSubmit}>
+                {(editMutation.isPending) ? (
+                  <ButtonLoader />
+                ) : (
+                  'save'
+                )}
+              </button>
+              {/* <button className="btn2" onClick={onSubmit}>save</button> */}
+              <button className="btn1">permission</button>
+          </div>
         </div>
 
         <div className="field_wrap">
@@ -177,26 +198,24 @@ const CampaignDetail = () => {
                   />
                   <span>{item}</span>
                   {item === "Deal Max Quantity" && ( 
-                      <input
-                        type="text"
-                        value={dealMaxQty}
-                        onChange={(e) => {setDealMaxQty(e.target.value)}}
-                        placeholder="Deal Max Quantity"
-                      />
-                    )}
+                    <input
+                      type="text"
+                      value={dealMaxQty}
+                      onChange={(e) => {setDealMaxQty(e.target.value)}}
+                      placeholder="Deal Max Quantity"
+                    />
+                  )}
+                  {item === "Sample Max Quantity" && ( 
+                    <input
+                      type="text"
+                      value={sampleMaxQty}
+                      onChange={(e) => {setSampleMaxQty(e.target.value)}}
+                      placeholder="Sample Max Quantity"
+                    />
+                  )}
                 </li>
               ))}
             </ul>
-          </div>
-
-          {/* Center Buttons */}
-          <div className="field_cover center">
-            <button onClick={handleAdd} disabled={checkedLeft.length === 0}>
-              <IoChevronForward />
-            </button>
-            <button onClick={handleRemove} disabled={checkedRight.length === 0}>
-              <IoChevronBackOutline />
-            </button>
           </div>
 
           {/* Right Column */}
