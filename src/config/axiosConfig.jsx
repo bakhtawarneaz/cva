@@ -26,6 +26,17 @@ export const axiosPrivate = axios.create({
 	withCredentials: true,
 });
 
+
+export const isTokenExpired = (token) => {
+	try {
+		const decodedToken = JSON.parse(atob(token.split('.')[1]));
+		const currentTime = Date.now() / 1000; 
+		return decodedToken.exp < currentTime;
+	} catch (error) {
+		return true;
+	}
+};
+
 // Request interceptor
 api.interceptors.request.use(
 	async (request) => {
@@ -35,6 +46,11 @@ api.interceptors.request.use(
 		const token = account?.token;
 
 		if (token && isAuthenticated) {
+			if (isTokenExpired(token)) {
+				toast.error('Session expired, please login again!');
+				store.dispatch(logout());
+				throw new axios.Cancel('Token expired, user logged out.');
+			}
             request.headers["xt-user-token"] = token;
             request.headers["xt-client-token"] = token;
         }

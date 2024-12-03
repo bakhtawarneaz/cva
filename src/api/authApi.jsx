@@ -17,7 +17,9 @@ export const login = async (credentials) => {
       }
         return response;
       } catch (error) {
-        toast.error(error.response.data.message)
+        const errorMessage = error.response?.data?.message || 'Login failed!';
+        toast.error(errorMessage);
+        return null;
       }
 };
 
