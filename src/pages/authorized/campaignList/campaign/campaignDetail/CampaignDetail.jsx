@@ -34,7 +34,14 @@ const CampaignDetail = () => {
 
   const campaignColumns = campaignsData?.data?.fetchCampaign?.campaignColumns || [];
   const campaigs = campaignsData?.data?.fetchCampaign?.campaigns || [];
-  console.log(campaigs)
+
+  
+  const permissionFields = campaigs.length
+  ? Object.keys(campaigs[0])
+      .filter((key) => key.startsWith("is_"))
+      .map((key) => ({ key, value: campaigs[0][key] }))
+  : [];
+
   const formattedColumnNames = campaignColumns.map((col) =>
     col.column_name
       .split("_")
@@ -49,7 +56,7 @@ const CampaignDetail = () => {
   const [dealMaxQty, setDealMaxQty] = useState("");
   const [sampleMaxQty, setSampleMaxQty] = useState("");
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [permissionFields, setPermissionFields] = useState([]);
+  //const [permissionFields, setPermissionFields] = useState([]);
 
  /* useEffect Here...*/
   useEffect(() => {
@@ -79,11 +86,10 @@ const CampaignDetail = () => {
   );
 
   const handlePermissionChange = (key, value) => {
-    setPermissionFields((prev) =>
-      prev.map((field) =>
-        field.key === key ? { ...field, value: value } : field
-      )
+    const updatedFields = permissionFields.map((field) =>
+      field.key === key ? { ...field, value: value } : field
     );
+
   };
 
   /* Functions Here...*/
