@@ -14,6 +14,7 @@ import { useSelector } from "react-redux";
 
 /* components...*/
 import ButtonLoader from '@components/ButtonLoader';
+import Drawer from '@components/Drawer';
 
 const CampaignDetail = () => {
 
@@ -32,6 +33,8 @@ const CampaignDetail = () => {
   const editMutation = useEditCampaign();
 
   const campaignColumns = campaignsData?.data?.fetchCampaign?.campaignColumns || [];
+  const campaigs = campaignsData?.data?.fetchCampaign?.campaigns || [];
+  console.log(campaigs)
   const formattedColumnNames = campaignColumns.map((col) =>
     col.column_name
       .split("_")
@@ -45,8 +48,8 @@ const CampaignDetail = () => {
   const [checkedRight, setCheckedRight] = useState([]); 
   const [dealMaxQty, setDealMaxQty] = useState("");
   const [sampleMaxQty, setSampleMaxQty] = useState("");
-
-  
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [permissionFields, setPermissionFields] = useState([]);
 
  /* useEffect Here...*/
   useEffect(() => {
@@ -75,6 +78,13 @@ const CampaignDetail = () => {
     (item) => !availableItems.includes(item)
   );
 
+  const handlePermissionChange = (key, value) => {
+    setPermissionFields((prev) =>
+      prev.map((field) =>
+        field.key === key ? { ...field, value: value } : field
+      )
+    );
+  };
 
   /* Functions Here...*/
   const onSubmit = async () => {
@@ -140,6 +150,10 @@ const CampaignDetail = () => {
   };
 
 
+  const openDrawer = () => setIsDrawerOpen(true);
+  const closeDrawer = () => setIsDrawerOpen(false);
+
+
   return (
     <>
       <div className="campaign_wrap">
@@ -161,8 +175,7 @@ const CampaignDetail = () => {
                   'save'
                 )}
               </button>
-              {/* <button className="btn2" onClick={onSubmit}>save</button> */}
-              <button className="btn1">permission</button>
+              <button className="btn1" onClick={openDrawer}>permission</button>
           </div>
         </div>
 
@@ -254,6 +267,26 @@ const CampaignDetail = () => {
           </div>
         </div>
       </div>
+
+      {/* Drawer */}
+        <Drawer 
+          isOpen={isDrawerOpen}
+          onClose={closeDrawer}
+          title="Manage Permissions"
+        >
+          {permissionFields.map(({ key, value }) => (
+            <div key={key} className="permission-item">
+              <label>
+                <input
+                  type="checkbox"
+                  checked={value}
+                  onChange={(e) => handlePermissionChange(key, e.target.checked)}
+                />
+                {key.replace("is_", "").replace(/_/g, " ").toUpperCase()}
+              </label>
+            </div>
+          ))}
+        </Drawer>
     </>
   );
 };

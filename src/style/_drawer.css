@@ -1,0 +1,97 @@
+.drawer_overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    z-index: 1000;
+  }
+  
+  .drawer_overlay.visible {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .drawer {
+    position: fixed;
+    right: -400px;
+    top: 0;
+    width: 400px;
+    height: 100%;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.3);
+    z-index: 1001;
+    transition: 0.5s all;
+  }
+
+  .drawer.open {
+    right: 0;
+    transition: 0.5s all;
+  }
+  
+  .drawer_header {
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ddd;
+  }
+  
+.drawer_header h3 {
+    font-family: var(--family);
+    font-weight: 400;
+    font-size: 16px;
+    text-transform: capitalize;
+}
+
+.drawer_header .close-btn svg {
+    color: var(--primary-color);
+}
+
+.drawer_body {
+    flex: 1;
+    padding: 15px;
+    overflow-y: auto;
+}
+
+.drawer_footer {
+    padding: 15px;
+    border-top: 1px solid #ddd;
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+  
+.drawer_footer button {
+    box-shadow: 0px 2px 4px rgba(165, 163, 174, 0.4);
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: var(--family);
+    font-weight: 400;
+    font-size: 14px;
+    text-transform: capitalize;
+    border: 0;
+    width: 100%;
+}
+
+.drawer_footer button.btn-1{
+    color: #000;
+}
+
+.drawer_footer button.btn-2{
+    color: #fff;
+    background-color: var(--primary-color);
+}
