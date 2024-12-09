@@ -47,18 +47,9 @@ const CampaignDetail = () => {
     if (campaignsData && !isInitialized.current) {
       const columns = campaignsData?.data?.fetchCampaign?.campaignColumns || [];
       const campaigns = campaignsData?.data?.fetchCampaign?.campaigns || [];
-      const initialAvailableItems = columns
-        .filter((col) => col.value === true)
-        .map((col) =>
-          col.column_name
-            .split("_")
-            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-            .join(" ")
-        );
-
+      const initialAvailableItems = columns.filter((col) => col.value === true).map((col) => col.column_name.split("_").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" "));
       setCampaignColumns(columns);
       setAvailableItems(initialAvailableItems);
-
       setFormattedColumnNames(
         columns.map((col) =>
           col.column_name
@@ -67,19 +58,16 @@ const CampaignDetail = () => {
             .join(" ")
         )
       );
-
       const dealMaxQuantity = campaigns[0]?.deal_max_quantity || "";
       const sampleMaxQuantity = campaigns[0]?.sample_max_quantity || "";
       setDealMaxQty(dealMaxQuantity);
       setSampleMaxQty(sampleMaxQuantity);
-
       const initialPermissionFields = campaigns.length
         ? Object.keys(campaigns[0])
             .filter((key) => key.startsWith("is_"))
             .map((key) => ({ key, value: campaigns[0][key] }))
         : [];
       setPermissionFields(initialPermissionFields);
-
       isInitialized.current = true;
     }
   }, [campaignsData]);
