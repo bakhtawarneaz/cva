@@ -95,3 +95,9 @@
     color: #fff;
     background-color: var(--primary-color);
 }
+
+.drawer_footer button.btn-2[disabled] {
+  background: var(--primary-color);
+  opacity: 0.4;
+  cursor: not-allowed;
+}

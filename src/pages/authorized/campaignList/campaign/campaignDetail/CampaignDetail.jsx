@@ -1,24 +1,23 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 
-/* icons... */
+/* icons */
 import { IoChevronForward } from "react-icons/io5";
 import { IoChevronBackOutline } from "react-icons/io5";
 
-/* hooks... */
+/* hooks */
 import { useFetchCampaign } from "@hooks/useQuery";
 import { useEditCampaign } from "@hooks/useMutation";
 
-/* packages... */
+/* packages */
 import { useSelector } from "react-redux";
 
-/* components...*/
-import ButtonLoader from '@components/ButtonLoader';
-import Drawer from '@components/Drawer';
+/* components */
+import ButtonLoader from "@components/ButtonLoader";
+import Drawer from "@components/Drawer";
 
 const CampaignDetail = () => {
-
-  /* Redus State Here...*/
+  /* Redux State */
   const userId = useSelector((state) => state.auth.user.id);
 
   /* Hooks */
@@ -32,68 +31,74 @@ const CampaignDetail = () => {
   /* Mutations */
   const editMutation = useEditCampaign();
 
-  const campaignColumns = campaignsData?.data?.fetchCampaign?.campaignColumns || [];
-  const campaigs = campaignsData?.data?.fetchCampaign?.campaigns || [];
-
-  
-  const permissionFields = campaigs.length
-  ? Object.keys(campaigs[0])
-      .filter((key) => key.startsWith("is_"))
-      .map((key) => ({ key, value: campaigs[0][key] }))
-  : [];
-
-  const formattedColumnNames = campaignColumns.map((col) =>
-    col.column_name
-      .split("_")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(" ")
-  );
-
-  /* UseState Here...*/
-  const [availableItems, setAvailableItems] = useState([]); 
-  const [checkedLeft, setCheckedLeft] = useState([]); 
-  const [checkedRight, setCheckedRight] = useState([]); 
+  /* State Management */
+  const [campaignColumns, setCampaignColumns] = useState([]);
+  const [availableItems, setAvailableItems] = useState([]);
+  const [checkedLeft, setCheckedLeft] = useState([]);
+  const [checkedRight, setCheckedRight] = useState([]);
   const [dealMaxQty, setDealMaxQty] = useState("");
   const [sampleMaxQty, setSampleMaxQty] = useState("");
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  //const [permissionFields, setPermissionFields] = useState([]);
+  const [permissionFields, setPermissionFields] = useState([]);
+  const [formattedColumnNames, setFormattedColumnNames] = useState([]);
 
- /* useEffect Here...*/
+  /* Initialize Data */
   useEffect(() => {
     if (campaignsData && !isInitialized.current) {
-      const initialAvailableItems = formattedColumnNames.filter(
-        (_, index) => campaignColumns[index]?.value === true
-      );
+      const columns = campaignsData?.data?.fetchCampaign?.campaignColumns || [];
+      const campaigns = campaignsData?.data?.fetchCampaign?.campaigns || [];
+      const initialAvailableItems = columns
+        .filter((col) => col.value === true)
+        .map((col) =>
+          col.column_name
+            .split("_")
+            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(" ")
+        );
+
+      setCampaignColumns(columns);
       setAvailableItems(initialAvailableItems);
 
-      const dealMaxQuantity = campaignsData?.data?.fetchCampaign.campaigns[0];
-      const sampleMaxQuantity = campaignsData?.data?.fetchCampaign.campaigns[0];
+      setFormattedColumnNames(
+        columns.map((col) =>
+          col.column_name
+            .split("_")
+            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(" ")
+        )
+      );
 
-      if (dealMaxQuantity?.deal_max_quantity) {
-        setDealMaxQty(dealMaxQuantity.deal_max_quantity);
-      } 
-      if (sampleMaxQuantity?.sample_max_quantity) {
-        setSampleMaxQty(sampleMaxQuantity.sample_max_quantity);
-      } 
+      const dealMaxQuantity = campaigns[0]?.deal_max_quantity || "";
+      const sampleMaxQuantity = campaigns[0]?.sample_max_quantity || "";
+      setDealMaxQty(dealMaxQuantity);
+      setSampleMaxQty(sampleMaxQuantity);
+
+      const initialPermissionFields = campaigns.length
+        ? Object.keys(campaigns[0])
+            .filter((key) => key.startsWith("is_"))
+            .map((key) => ({ key, value: campaigns[0][key] }))
+        : [];
+      setPermissionFields(initialPermissionFields);
 
       isInitialized.current = true;
     }
-  }, [campaignsData, formattedColumnNames, campaignColumns]);
+  }, [campaignsData]);
 
-
+  /* Derived Data */
   const selectedItems = formattedColumnNames.filter(
     (item) => !availableItems.includes(item)
   );
 
+  /* Handlers */
   const handlePermissionChange = (key, value) => {
-    const updatedFields = permissionFields.map((field) =>
-      field.key === key ? { ...field, value: value } : field
+    setPermissionFields((prevFields) =>
+      prevFields.map((field) =>
+        field.key === key ? { ...field, value } : field
+      )
     );
-
   };
 
-  /* Functions Here...*/
-  const onSubmit = async () => {
+  const handleDrawerSave = async () => {
     const updatedColumns = campaignColumns.map((col) => {
       const columnNameFormatted = col.column_name
         .split("_")
@@ -105,17 +110,30 @@ const CampaignDetail = () => {
         value: availableItems.includes(columnNameFormatted),
       };
     });
+
     const fetchCampaign = campaignsData?.data?.fetchCampaign.campaigns[0];
+
+    const updatedCampaign = { ...fetchCampaign };
+    permissionFields.forEach(({ key, value }) => {
+      updatedCampaign[key] = value;
+    });
+
     const PAYLOAD = {
       created_by: parseInt(userId),
-      ...fetchCampaign,
-      deal_max_quantity:dealMaxQty,
-      sample_max_quantity:sampleMaxQty,
-      columnNames: updatedColumns,   
+      ...updatedCampaign,
+      deal_max_quantity: dealMaxQty,
+      sample_max_quantity: sampleMaxQty,
+      columnNames: updatedColumns,
     };
 
-    editMutation.mutateAsync(PAYLOAD);
+    await editMutation.mutateAsync(PAYLOAD);
+    setIsDrawerOpen(false);
   };
+
+  const onSubmit = async () => {
+    await handleDrawerSave();
+  };
+
 
 
   const handleSelectAll = (isLeft) => {
@@ -145,20 +163,17 @@ const CampaignDetail = () => {
   const handleAdd = () => {
     setAvailableItems((prev) =>
       prev.filter((item) => !checkedLeft.includes(item))
-    ); 
+    );
     setCheckedLeft([]);
   };
 
-  
   const handleRemove = () => {
-    setAvailableItems((prev) => [...prev, ...checkedRight]); 
+    setAvailableItems((prev) => [...prev, ...checkedRight]);
     setCheckedRight([]);
   };
 
-
   const openDrawer = () => setIsDrawerOpen(true);
   const closeDrawer = () => setIsDrawerOpen(false);
-
 
   return (
     <>
@@ -166,22 +181,24 @@ const CampaignDetail = () => {
         <div className="top_bar_heading">
           <h2>Campaign ID # {id}</h2>
           <div className="camD_btn">
-              <div className="camD_btn_wrap">
-                <button onClick={handleAdd} disabled={checkedLeft.length === 0}>
-                  <IoChevronForward />
-                </button>
-                <button onClick={handleRemove} disabled={checkedRight.length === 0}>
-                  <IoChevronBackOutline />
-                </button>
-              </div>
-              <button className='btn2' disabled={editMutation.isPending} onClick={onSubmit}>
-                {(editMutation.isPending) ? (
-                  <ButtonLoader />
-                ) : (
-                  'save'
-                )}
+            <div className="camD_btn_wrap">
+              <button onClick={handleAdd} disabled={checkedLeft.length === 0}>
+                <IoChevronForward />
               </button>
-              <button className="btn1" onClick={openDrawer}>permission</button>
+              <button onClick={handleRemove} disabled={checkedRight.length === 0}>
+                <IoChevronBackOutline />
+              </button>
+            </div>
+            <button
+              className="btn2"
+              disabled={editMutation.isPending}
+              onClick={onSubmit}
+            >
+              {editMutation.isPending ? <ButtonLoader /> : "Save"}
+            </button>
+            <button className="btn1" onClick={openDrawer}>
+              Permission
+            </button>
           </div>
         </div>
 
@@ -216,19 +233,19 @@ const CampaignDetail = () => {
                     onChange={() => handleSingleSelect(item, true)}
                   />
                   <span>{item}</span>
-                  {item === "Deal Max Quantity" && ( 
+                  {item === "Deal Max Quantity" && (
                     <input
                       type="text"
                       value={dealMaxQty}
-                      onChange={(e) => {setDealMaxQty(e.target.value)}}
+                      onChange={(e) => setDealMaxQty(e.target.value)}
                       placeholder="Deal Max Quantity"
                     />
                   )}
-                  {item === "Sample Max Quantity" && ( 
+                  {item === "Sample Max Quantity" && (
                     <input
                       type="text"
                       value={sampleMaxQty}
-                      onChange={(e) => {setSampleMaxQty(e.target.value)}}
+                      onChange={(e) => setSampleMaxQty(e.target.value)}
                       placeholder="Sample Max Quantity"
                     />
                   )}
@@ -275,24 +292,29 @@ const CampaignDetail = () => {
       </div>
 
       {/* Drawer */}
-        <Drawer 
-          isOpen={isDrawerOpen}
-          onClose={closeDrawer}
-          title="Manage Permissions"
-        >
-          {permissionFields.map(({ key, value }) => (
-            <div key={key} className="permission-item">
-              <label>
-                <input
-                  type="checkbox"
-                  checked={value}
-                  onChange={(e) => handlePermissionChange(key, e.target.checked)}
-                />
-                {key.replace("is_", "").replace(/_/g, " ").toUpperCase()}
-              </label>
-            </div>
-          ))}
-        </Drawer>
+      <Drawer
+        isOpen={isDrawerOpen}
+        onClose={closeDrawer}
+        title="Manage Permissions"
+        handleSave={handleDrawerSave}
+        disabled={editMutation.isPending}
+        btnTitle={editMutation.isPending ? <ButtonLoader /> : "Save"}
+      >
+        {permissionFields.map(({ key, value }) => (
+          <div key={key} className="permission_item">
+            <label>
+              <input
+                type="checkbox"
+                checked={value || false}
+                onChange={(e) =>
+                  handlePermissionChange(key, e.target.checked)
+                }
+              />
+              <span>{key.replace("is_", "").replace(/_/g, " ").toUpperCase()}</span>
+            </label>
+          </div>
+        ))}
+      </Drawer>
     </>
   );
 };

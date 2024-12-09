@@ -2,7 +2,7 @@ import React from "react";
 import '@styles/_drawer.css';
 import { IoCloseCircleOutline } from "react-icons/io5";
 
-const Drawer = ({ isOpen, onClose, title, children }) => {
+const Drawer = ({ isOpen, onClose, title, children, handleSave, disabled, btnTitle }) => {
 
   return (
     <>
@@ -19,7 +19,11 @@ const Drawer = ({ isOpen, onClose, title, children }) => {
             </div>
             <div className='drawer_footer'>
                 <button className="btn-1" onClick={onClose}>cancel</button>
-                <button className="btn-2">save</button>
+                <button 
+                  className="btn-2" 
+                  onClick={handleSave}
+                  disabled={disabled}
+                >{btnTitle}</button>
             </div>
         </div>
       </div>
