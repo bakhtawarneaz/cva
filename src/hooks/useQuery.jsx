@@ -5,6 +5,7 @@ import { getBrand } from '@api/brandApi';
 import { getUser, getRole } from '@api/userApi';
 import { fetchCities } from '@api/cityApi';
 import { fetchCampaigns } from '@api/campaignApi';
+import { getBa } from '@api/baApi';
 
 /** Countries and cities**/
 export function useFetchCountries() {
@@ -80,6 +81,16 @@ export function useFetchCampaign(params) {
     return useQuery({
         queryKey: ['campaign', params],
         queryFn: () => fetchCampaigns(params),
+        staleTime: 60 * 60 * 1000,
+    });
+}
+
+
+/** Campaign **/
+export function useFetchBA(params) {
+    return useQuery({
+        queryKey: ['ba', params],
+        queryFn: () => getBa(params),
         staleTime: 60 * 60 * 1000,
     });
 }

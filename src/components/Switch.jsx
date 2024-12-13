@@ -6,7 +6,7 @@ const Switch = ({ className, isChecked, onToggle }) => {
       <button 
         type="button" 
         className={`btn-toggle ${className} ${isChecked ? 'checked' : ''}`}
-        onClick={onToggle}
+        onClick={() => onToggle(!isChecked)}
       >
         <div className="handle"></div>
       </button>

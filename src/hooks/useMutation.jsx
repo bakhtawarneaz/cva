@@ -4,6 +4,7 @@ import { createOrganization, deleteOrganization, editOrganization } from '@api/o
 import { createBrand, deleteBrand, editBrand } from '@api/brandApi';
 import { createUser, deleteUser, editUser } from '@api/userApi';
 import { createCampaign, deleteCampaign, editCampaign } from '@api/campaignApi';
+import { createBa, editBa, deleteBa } from '@api/baApi';
 import toast from 'react-hot-toast';
 
 /** Login **/
@@ -179,6 +180,51 @@ export function useDeleteCampaign() {
     onSuccess: () => {
       toast.success('Campaign status updated!');
       queryClient.invalidateQueries({ queryKey: ['campaign'] });
+    },
+  });
+}
+
+
+/** Main BA **/
+
+export function useCreateBA(resetForm, closeModal, handleResetUpload) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: createBa,
+    onSuccess: () => {
+      toast.success('BA created successfully!');
+      queryClient.invalidateQueries({ queryKey: ['ba'] });
+      resetForm();
+      closeModal();
+      handleResetUpload();
+    },
+    onError: (err) => {
+      toast.error(err?.response?.data?.message);
+    }
+  });
+}
+
+export function useEditBA(closeModal) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: editBa,
+    onSuccess: () => {
+      toast.success('BA updated successfully!');
+      queryClient.invalidateQueries({ queryKey: ['ba'], exact: false });
+      if (closeModal) {
+        closeModal();
+      }
+    },
+  });
+}
+
+export function useDeleteBA() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: deleteBa,
+    onSuccess: () => {
+      toast.success('BA status updated!');
+      queryClient.invalidateQueries({ queryKey: ['ba'] });
     },
   });
 }

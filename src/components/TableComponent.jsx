@@ -6,7 +6,7 @@ const TableComponent = ({ columns, data, isLoading, renderActions, actionLabel =
 
   const renderSkeletonRows = () => {
     return Array.from({ length: skeletonRowCount }).map((_, rowIndex) => (
-      <tr key={`skeleton-${rowIndex}`}>
+      <tr key={`skeleton-row-${rowIndex}`}>
         {columns.map((_, colIndex) => (
           <td key={`skeleton-cell-${rowIndex}-${colIndex}`}>
             <Loading height={65} />
@@ -35,9 +35,9 @@ const TableComponent = ({ columns, data, isLoading, renderActions, actionLabel =
           {isLoading ? (
             renderSkeletonRows()
           ) : data.length > 0 ? (
-            data.map((row) => (
+            data.map((row, rowIndex) => (
               <tr 
-                key={row.id}
+                key={`row-${row.id || rowIndex}`}
                 onClick={() => onRowClick && onRowClick(row)}
                 style={{ cursor: onRowClick ? "pointer" : "default" }}
               >
