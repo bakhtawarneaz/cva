@@ -62,7 +62,7 @@
 .card_header .left input {
     width: 50%;
     outline: none;
-    border: 1px solid var(--primary-color);
+    border: 1px solid #000;
     padding: 8px 15px;
     font-family: var(--family);
     font-size: 16px;
@@ -70,7 +70,7 @@
 }
 
 .card_header .left input::placeholder {
-    color: var(--primary-color);
+    color: #000;
     font-family: var(--family);
     font-size: 14px;
     font-weight: 400;

@@ -5,8 +5,8 @@ import Loading from '@components/Loading';
 
 /* packages...*/
 import { Doughnut } from 'react-chartjs-2';
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
-ChartJS.register(ArcElement, Tooltip, Legend);
+import { Chart as ChartJS, ArcElement, Tooltip, Legend, Filler } from 'chart.js';
+ChartJS.register(ArcElement, Tooltip, Legend, Filler);
 
 const DoorAnsweredChart = ({ doorsAnswered = 0, doorsNotAnswered = 0, isLoading }) => {
 

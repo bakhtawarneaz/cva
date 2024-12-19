@@ -46,6 +46,15 @@ const Color = () => {
           border-left: 2px solid ${gradientEndColor};
           border-bottom: 2px solid ${gradientEndColor};
         }
+        .dashboard_filter .custom_date_picker .rmdp-day-picker .rmdp-week .rmdp-today span{
+          background-color: ${primaryColor};
+        }
+        .dashboard_filter .custom_date_picker .rmdp-day-picker .rmdp-week .rmdp-range{
+          background-color: ${primaryColor};
+        }
+        .dashboard_filter .custom_date_picker .rmdp-day-picker .rmdp-week .rmdp-day span:hover{
+          background-color: ${primaryColor};
+        }  
       `}
     />
   );

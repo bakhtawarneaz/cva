@@ -414,7 +414,7 @@ const Organization = () => {
            {errors.primary_color && <p className='error'>color is required</p>} 
         </div>
         <div className='modal_btn_cover'>
-          <button type="submit" className='cancel' onClick={closeModal}>cancel</button>
+          <button type="button" className='cancel' onClick={closeModal}>cancel</button>
           <button type="submit" className='btn' disabled={createMutation.isPending || editMutation.isPending}>
             {(createMutation.isPending || editMutation.isPending) ? (
               <ButtonLoader />
